@@ -12,6 +12,9 @@
  * Error 0: No error
  * Error 1: User input too large
  * Error 2: Wrong number of arguments
+ * Error 3: Out of shell memory
+ *
+ *
  */
 
 
@@ -48,6 +51,7 @@ int main(){
         printf("%s", prompt);
         fgets(userInput, BUFFER_SIZE, stdin);
 
+        // Check for input size
         if (inputTooLarge(userInput, BUFFER_SIZE)){
             errorCode = 1;
         }
@@ -57,6 +61,7 @@ int main(){
             continue;
         }
 
+        // Parse user input
         char* words[100];
         int wordCount = parsedInput(userInput, words);
         errorCode = interpreter(words, wordCount);
@@ -78,8 +83,9 @@ int parsedInput(char* input, char** words){
      * {input} is parsed, with all unnecessary whitespace at the start of the string removed, and individual words
      * separated. Returns the number of words that were encountered during the parsing.
      *
-     * @param: input The string that needs to be parsed
-     * @param: words The string array that receives the parsed string
+     * @param: input The string that needs to be parsed.
+     * @param: words The string array that receives the parsed string.
+     * @return: int Word count, needed in the interpretation process.
      */
     int wordCount = 0;
     int index;
