@@ -13,7 +13,7 @@
  * Error 1: User input too large
  * Error 2: Wrong number of arguments
  * Error 3: Out of shell memory
- *
+ * Error 4: Var not found
  *
  */
 

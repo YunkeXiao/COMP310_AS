@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 #define MEM_SIZE 1000
 
@@ -42,4 +43,24 @@ int setValue(char* var, char* value, struct MEM* shellmemory, int* memorySize){
     shellmemory[*memorySize] = newData;
     *memorySize += 1;
     return 0;
+}
+
+int printValue(char* var, char* value, struct MEM* shellmemory, int* memorySize){
+    /*
+     * Look for {var} in {shellmemory}. If found, return its paired {value} otherwise return an error code
+     *
+     * @param: var
+     * @param: value
+     * @param: shellmemory Array storing all var:value pairs.
+     * @param: memorySize Int representing the number of pairs in the shellmemory.
+     * @return: int Error code
+     */
+    for(int i = 0; i < *memorySize; i++){
+        data = (shellmemory + sizeof(data) * i);
+        if (strcmp(data->var, var) == 0){
+            printf("\n%s\n", data->value);
+            return 0;
+        }
+    }
+    return 4;
 }
