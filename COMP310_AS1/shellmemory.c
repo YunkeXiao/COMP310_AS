@@ -10,8 +10,6 @@ struct MEM{
 
 struct MEM shellMemory[MEM_SIZE];
 int* memorySize = 0;
-struct MEM* data;
-
 
 int setValue(char* var, char* value, struct MEM* shellmemory, int* memorySize){
     /*
@@ -24,6 +22,7 @@ int setValue(char* var, char* value, struct MEM* shellmemory, int* memorySize){
      * @param: memorySize Int representing the number of pairs in the shellmemory.
      * @return: int Error code
      */
+    struct MEM* data;
     for(int i = 0; i < *memorySize; i++){
         data = (shellmemory + sizeof(data) * i);
         if (strcmp(data->var, var) == 0){
@@ -55,6 +54,7 @@ int printValue(char* var, char* value, struct MEM* shellmemory, int* memorySize)
      * @param: memorySize Int representing the number of pairs in the shellmemory.
      * @return: int Error code
      */
+    struct MEM* data;
     for(int i = 0; i < *memorySize; i++){
         data = (shellmemory + sizeof(data) * i);
         if (strcmp(data->var, var) == 0){

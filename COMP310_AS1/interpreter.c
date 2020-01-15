@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include "shellmemory.c"
 
 int interpreter(char** words, int wordCount){
     if (wordCount == 0){
