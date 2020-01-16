@@ -5,6 +5,7 @@
 #include "interpreter.h"
 #include "shellmemory.h"
 #include "helper.h"
+#include "MEM.h"
 
 /*
  * Error Code Definitions
@@ -12,20 +13,19 @@
  * Error 0: No error
  * Error 1: User input too large
  * Error 2: Wrong number of arguments
- * Error 3: Out of shell memory
- * Error 4: Var not found
- *
  */
-
-
-
+#define MEM_SIZE 1000
 #define BUFFER_SIZE 502
+
+int parsedInput(char* input, char** words);
 
 char prompt[100] = "$ \0";
 char userInput[BUFFER_SIZE];
 int errorCode;
+struct MEM* shellMemory;
+int memorySize = 0;
+
 char shellMeta[100] = "Turtle Shell\nVersion 1.0 Created On 01/15/2020\n";
-int parsedInput(char* input, char** words);
 char welcomeMessage[5000] = "██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ██╗\n"
                             "██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██║\n"
                             "██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗      ██║\n"
@@ -40,8 +40,14 @@ char quitMessage[5000] = "███████╗███████╗██
                          "███████║███████╗███████╗       ██║   ╚██████╔╝╚██████╔╝    ███████║╚██████╔╝╚██████╔╝██║ ╚████║██╗\n"
                          "╚══════╝╚══════╝╚══════╝       ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝\n";
 
-
 int main(){
+    // Initialize shellMemory;
+    shellMemory = malloc(sizeof(struct MEM) * MEM_SIZE);
+    for (int i = 0; i < MEM_SIZE; i++){
+        struct MEM data = {.var = "", .value = ""};
+        shellMemory[i] = data;
+    }
+
 
     printf("%s", welcomeMessage);
     printf("%s", shellMeta);
@@ -51,7 +57,7 @@ int main(){
         printf("%s", prompt);
         fgets(userInput, BUFFER_SIZE, stdin);
 
-        // Check for input size
+        // Check for user input size
         if (inputTooLarge(userInput, BUFFER_SIZE)){
             errorCode = 1;
         }
@@ -61,10 +67,10 @@ int main(){
             continue;
         }
 
-        // Parse user input
+        // Pass the parsed user input into the iterpreter
         char* words[100];
         int wordCount = parsedInput(userInput, words);
-        errorCode = interpreter(words, wordCount);
+        errorCode = interpreter(words, wordCount, shellMemory, &memorySize);
 
         if (errorCode == 2){
             printf("ERROR 2: Wrong number of arguments.\n");
@@ -83,9 +89,8 @@ int parsedInput(char* input, char** words){
      * {input} is parsed, with all unnecessary whitespace at the start of the string removed, and individual words
      * separated. Returns the number of words that were encountered during the parsing.
      *
-     * @param: input The string that needs to be parsed.
-     * @param: words The string array that receives the parsed string.
-     * @return: int Word count, needed in the interpretation process.
+     * @param: input The string that needs to be parsed
+     * @param: words The string array that receives the parsed string
      */
     int wordCount = 0;
     int index;
