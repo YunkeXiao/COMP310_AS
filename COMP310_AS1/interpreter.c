@@ -3,6 +3,7 @@
 #include "shellmemory.h"
 #include "MEM.h"
 
+char* fileName;
 
 int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memorySize){
     if (wordCount == 0){
@@ -25,6 +26,7 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
     // quit command
     if (strcmp(words[0], "quit") == 0) {
         if (wordCount != 1){
+            printf("\nSTRING: %s\n", words[1]);
             return 2;
         }
         return -1;  // Error code -1 signals the shell to quit
@@ -45,6 +47,16 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         }
         return printValue(words[1], shellMemory, memorySize);
     }
-
+    if (strcmp(words[0], "run") == 0) {
+        if (wordCount != 2) {
+            return 2;
+        }
+        fileName = words[1];
+        return 5;
+    }
     return 0;
+}
+
+char* getFileName(){
+    return fileName;
 }

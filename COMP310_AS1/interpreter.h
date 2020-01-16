@@ -4,5 +4,6 @@
 #include "MEM.h"
 
 int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memorySize);
+char* getFileName();
 
 #endif //COMP310_AS1_INTERPRETER_H

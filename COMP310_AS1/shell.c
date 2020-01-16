@@ -15,13 +15,16 @@
  * Error 2: Wrong number of arguments
  * Error 3: Max variable count
  * Error 4: Variable not found
+ * Error 5: run command
  */
 
 #define MEM_SIZE 1000
 #define BUFFER_SIZE 502
 
-//int processInput(char* input);
+// Function declaration
+int processInput(char* input);
 int parseInput(char* input, char** words);
+int runFile(char* fileName);
 
 char prompt[100] = "$ \0";
 char userInput[BUFFER_SIZE];
@@ -52,7 +55,6 @@ int main(){
         shellMemory[i] = data;
     }
 
-
     printf("%s", welcomeMessage);
     printf("%s", shellMeta);
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
@@ -60,10 +62,10 @@ int main(){
         errorCode = 0;
         printf("%s", prompt);
         fgets(userInput, BUFFER_SIZE, stdin);
-        
-        // Check for user input size
-        if (inputTooLarge(userInput, BUFFER_SIZE)){
-            errorCode = 1;
+        errorCode = processInput(userInput);
+
+        if (errorCode == 5){
+            errorCode = runFile(getFileName());
         }
 
         if (errorCode == 1){
@@ -71,38 +73,51 @@ int main(){
             continue;
         }
 
-        // Pass the parsed user input into the iterpreter
-        char* words[100];
-        int wordCount = parseInput(userInput, words);
-        errorCode = interpreter(words, wordCount, shellMemory, &memorySize);
-
         if (errorCode == 2){
             printf("ERROR 2: Wrong number of arguments.\n");
             continue;
         }
 
-        else if (errorCode == 3){
-            printf("ERROR 3: Maximum number of variables reached.");
+        if (errorCode == 3){
+            printf("ERROR 3: Maximum number of variables reached.\n");
             continue;
         }
 
-        else if (errorCode == 4){
-            printf("ERROR 4: Variable not found.");
+        if (errorCode == 4){
+            printf("ERROR 4: Variable not found.\n");
             continue;
         }
 
-        else if (errorCode == -1 ){
-            printf("%s", quitMessage);
+        if (errorCode == 6){
+            printf("ERROR 6: File not found.\n");
+            continue;
+        }
+
+        if (errorCode == -1 ){
+            printf("\n%s", quitMessage);
             exit(99);
         }
     }
 }
 
-//int processInput(char* input){
-//
-//}
-
-
+int runFile(char* fileName){
+    FILE* fp;
+    int error;
+    if ((fp = fopen(fileName,"r"))){
+        char buffer[BUFFER_SIZE];
+        while((fgets(buffer, BUFFER_SIZE, fp)) != NULL){
+            printf("%s%s",prompt, buffer);
+            error = processInput(buffer);
+            if (error != 0){
+                return error;
+            }
+            memset(buffer, '\0', BUFFER_SIZE);
+        }
+        return 0;
+    } else {
+        return 6;
+    }
+}
 
 int parseInput(char* input, char** words){
     /*
@@ -137,3 +152,13 @@ int parseInput(char* input, char** words){
     return wordCount;
 }
 
+int processInput(char* input){
+    // Check for user input size
+    if (inputTooLarge(input, BUFFER_SIZE)){
+        return 1;
+    }
+    // Pass the parsed user input into the iterpreter
+    char* words[100];
+    int wordCount = parseInput(input, words);
+    return interpreter(words, wordCount, shellMemory, &memorySize);
+}
