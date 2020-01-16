@@ -6,6 +6,13 @@
 char* fileName;
 
 int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memorySize){
+    /*
+     * Given the parsed shell input, check which command is being called, if any, and apply its effects.
+     * @param: words Parsed input
+     * @param: wordCount Used to check for correctness in argument count
+     * @param: shellMemory Needed for setting and printing variables
+     * @param: memorySize Optimizes search algorithm
+     */
     if (wordCount == 0){
         return 0;
     }
@@ -58,5 +65,9 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
 }
 
 char* getFileName(){
+    /*
+     * Filename getter. This is needed, since our function for running shell commands is in shell.c
+     * return: char* String for the filename
+     */
     return fileName;
 }

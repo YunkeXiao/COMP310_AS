@@ -64,6 +64,7 @@ int main(){
         fgets(userInput, BUFFER_SIZE, stdin);
         errorCode = processInput(userInput);
 
+        // Error code 5 isn't an error, in fact it's to tell the shell that a file needs to be run
         if (errorCode == 5){
             errorCode = runFile(getFileName());
         }
@@ -101,6 +102,11 @@ int main(){
 }
 
 int runFile(char* fileName){
+    /*
+     * Given a filename, read line by line and try to process them like you would a user input
+     * @param: fileName String of the filename
+     * @return: int Error code
+     */
     FILE* fp;
     int error;
     if ((fp = fopen(fileName,"r"))){
@@ -153,6 +159,13 @@ int parseInput(char* input, char** words){
 }
 
 int processInput(char* input){
+    /*
+     * Takes a string input and tries to run shell commands based on it
+     *
+     * @param: input String input
+     * @return: int Error code
+     */
+
     // Check for user input size
     if (inputTooLarge(input, BUFFER_SIZE)){
         return 1;
