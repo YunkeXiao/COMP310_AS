@@ -47,13 +47,15 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         return setValue(words[1], words[2], shellMemory, memorySize);
     }
 
-    //print command
+    // print command
     if (strcmp(words[0], "print") == 0) {
         if (wordCount != 2) {
             return 2;
         }
         return printValue(words[1], shellMemory, memorySize);
     }
+
+    // run command
     if (strcmp(words[0], "run") == 0) {
         if (wordCount != 2) {
             return 2;

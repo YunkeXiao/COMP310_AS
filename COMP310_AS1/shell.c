@@ -119,9 +119,11 @@ int runFile(char* fileName){
         while((fgets(buffer, BUFFER_SIZE, fp)) != NULL){
             printf("%s%s",prompt, buffer);
             error = processInput(buffer);
+            // Once and error is encountered, stop running the text file and return the error
             if (error != 0){
                 return error;
             }
+            // Reset buffer, otherwise new inputs may get corrupted
             memset(buffer, '\0', BUFFER_SIZE);
         }
         return 0;
