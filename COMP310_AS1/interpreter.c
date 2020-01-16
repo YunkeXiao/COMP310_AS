@@ -61,7 +61,7 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         fileName = words[1];
         return 5;
     }
-    return 0;
+    return 7;
 }
 
 char* getFileName(){

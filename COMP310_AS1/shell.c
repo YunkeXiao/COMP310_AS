@@ -16,6 +16,8 @@
  * Error 3: Max variable count
  * Error 4: Variable not found
  * Error 5: run command
+ * Error 6: File not found
+ * Error 7: Invalid command
  */
 
 #define MEM_SIZE 1000
@@ -93,7 +95,10 @@ int main(){
             printf("ERROR 6: File not found.\n");
             continue;
         }
-
+        if (errorCode == 7){
+            printf("ERROR 7: Invalid command.\n");
+            continue;
+        }
         if (errorCode == -1 ){
             printf("\n%s", quitMessage);
             exit(99);
