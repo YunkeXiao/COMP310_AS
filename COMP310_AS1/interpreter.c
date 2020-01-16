@@ -14,11 +14,11 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         if (wordCount != 1) {
             return 2;
         }
-        printf("\nhelp                             Displays all the commands\n");
+        printf("help                             Displays all the commands\n");
         printf("quit                             Exits/terminates the shell with a farewell message\n");
         printf("set VAR STRING                   Assigns a value to shell memory\n");
         printf("print VAR                        Displays the STRING assigned to VAR\n");
-        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n\n");
+        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n");
         return 0;
     }
 
@@ -35,8 +35,7 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         if (wordCount != 3) {
             return 2;
         }
-        setValue(words[1], words[2], shellMemory, memorySize);
-        return 0;
+        return setValue(words[1], words[2], shellMemory, memorySize);
     }
 
     //print command
@@ -44,7 +43,8 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         if (wordCount != 2) {
             return 2;
         }
-        printValue(words[1], shellMemory, memorySize);
+        return printValue(words[1], shellMemory, memorySize);
     }
+
     return 0;
 }

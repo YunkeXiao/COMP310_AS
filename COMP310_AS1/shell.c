@@ -13,11 +13,15 @@
  * Error 0: No error
  * Error 1: User input too large
  * Error 2: Wrong number of arguments
+ * Error 3: Max variable count
+ * Error 4: Variable not found
  */
+
 #define MEM_SIZE 1000
 #define BUFFER_SIZE 502
 
-int parsedInput(char* input, char** words);
+//int processInput(char* input);
+int parseInput(char* input, char** words);
 
 char prompt[100] = "$ \0";
 char userInput[BUFFER_SIZE];
@@ -56,7 +60,7 @@ int main(){
         errorCode = 0;
         printf("%s", prompt);
         fgets(userInput, BUFFER_SIZE, stdin);
-
+        
         // Check for user input size
         if (inputTooLarge(userInput, BUFFER_SIZE)){
             errorCode = 1;
@@ -69,7 +73,7 @@ int main(){
 
         // Pass the parsed user input into the iterpreter
         char* words[100];
-        int wordCount = parsedInput(userInput, words);
+        int wordCount = parseInput(userInput, words);
         errorCode = interpreter(words, wordCount, shellMemory, &memorySize);
 
         if (errorCode == 2){
@@ -77,14 +81,30 @@ int main(){
             continue;
         }
 
-        if (errorCode == -1 ){
+        else if (errorCode == 3){
+            printf("ERROR 3: Maximum number of variables reached.");
+            continue;
+        }
+
+        else if (errorCode == 4){
+            printf("ERROR 4: Variable not found.");
+            continue;
+        }
+
+        else if (errorCode == -1 ){
             printf("%s", quitMessage);
             exit(99);
         }
     }
 }
 
-int parsedInput(char* input, char** words){
+//int processInput(char* input){
+//
+//}
+
+
+
+int parseInput(char* input, char** words){
     /*
      * {input} is parsed, with all unnecessary whitespace at the start of the string removed, and individual words
      * separated. Returns the number of words that were encountered during the parsing.
@@ -116,3 +136,4 @@ int parsedInput(char* input, char** words){
     }
     return wordCount;
 }
+

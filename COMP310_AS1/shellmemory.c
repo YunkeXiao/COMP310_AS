@@ -5,11 +5,6 @@
 
 #define MEM_SIZE 1000
 
-//struct MEM shellMemory[MEM_SIZE];
-//int memorySize = 0;
-//int* memorySizePtr = &memorySize;
-
-
 int setValue(char* var, char* value, struct MEM* shellMemory, int* memorySizePtr){
     /*
      * Look for {var} in {shellMemory}. If not found, then we create a new {MEM} struct and add it to {shellMemory}
@@ -55,7 +50,7 @@ int printValue(char* var, struct MEM* shellMemory, int* memorySizePtr){
     for(int i = 0; i < *memorySizePtr; i++){
         data = shellMemory[i];
         if (strcmp(data.var, var) == 0){
-            printf("\nVAR: %s\nVALUE: %s\n\n", data.var, data.value);
+            printf("VAR: %s\nVALUE: %s\n", data.var, data.value);
             return 0;
         }
     }

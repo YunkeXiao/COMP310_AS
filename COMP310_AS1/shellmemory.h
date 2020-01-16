@@ -5,7 +5,4 @@
 int setValue(char* var, char* value, struct MEM* shellmemory, int* memorySize);
 int printValue(char* var, struct MEM* shellmemory, int* memorySize);
 
-//extern struct MEM shellMemory;
-//extern int* memorySizePtr;
-
 #endif //COMP310_AS1_SHELLMEMORY_H
