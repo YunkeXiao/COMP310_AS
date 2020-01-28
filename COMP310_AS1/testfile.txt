@@ -1,0 +1,12 @@
+set a 10
+set b 5
+print a
+print b
+set a 15
+print a
+set bob hello
+set hello bob
+print bob
+print hello
+help
+quit
