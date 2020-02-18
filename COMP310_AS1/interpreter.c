@@ -34,7 +34,6 @@ int interpreter(char** words, int wordCount, int* memorySize){
     // quit command
     if (strcmp(words[0], "quit") == 0) {
         if (wordCount != 1){
-            printf("\nSTRING: %s\n", words[1]);
             return 2;
         }
         return -1;  // Error code -1 signals the shell to quit

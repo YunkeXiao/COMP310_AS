@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "interpreter.h"
 #include "shellmemory.h"
 #include "helper.h"
@@ -19,6 +20,8 @@
  * Error 5: run command
  * Error 6: File not found
  * Error 7: Invalid command
+ * ERROR 8: Too many running files
+ * ERROR 9: EOF reached
  */
 
 // Function declaration
@@ -30,7 +33,7 @@ char userInput[BUFFER_SIZE];
 int errorCode;
 int memorySize = 0;
 
-int main(){
+int main(int argc, char *argv[]){
     // Initialize shellMemory;
     initializeShellMemory();
 
@@ -40,9 +43,28 @@ int main(){
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
     while(1){
         errorCode = 0;
+//        printf("%s", PROMPT);
+
+        // Check for EOF when redirecting
+        if (fgets(userInput, BUFFER_SIZE, stdin) == NULL){
+            printf("ERROR 9: EOF reached\n%s", QUIT_MESSAGE);
+            exit(99);
+        }
+
         printf("%s", PROMPT);
-        fgets(userInput, BUFFER_SIZE, stdin);
+
+        // If reading inputs from file, then format inputs to emulate terminal input
+        if (!isatty(fileno(stdin))){
+            int length = (int)strlen(userInput);
+            if (userInput[length - 1] != '\n'){
+                printf("%s\n", userInput);
+            } else {
+                printf("%s", userInput);
+            }
+        }
+
         errorCode = processInput(userInput);
+        memset(userInput, '\0', BUFFER_SIZE);
 
         // Error code 5 isn't an error, in fact it's to tell the shell that a file needs to be run
         if (errorCode == 5){
@@ -190,6 +212,7 @@ int parseInput(char* input, char** words){
         }
         index++;  // Index is currently on an invalid character, so we move it by one byte
     }
+
     return wordCount;
 }
 
@@ -207,6 +230,9 @@ int processInput(char* input){
     }
     // Pass the parsed user input into the interpreter
     char* words[100];
+    memset(words, '\0', 100);
+
     int wordCount = parseInput(input, words);
+
     return interpreter(words, wordCount, &memorySize);
 }
