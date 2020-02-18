@@ -2,10 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "MEM.h"
+#include "constants.h"
 
-#define MEM_SIZE 1000
+struct MEM shellMemory[MEM_SIZE];
 
-int setValue(char* var, char* value, struct MEM* shellMemory, int* memorySizePtr){
+void initializeShellMemory(){
+    for (int i = 0; i < MEM_SIZE; i++){
+        struct MEM data = {.var = "", .value = ""};
+        shellMemory[i] = data;
+    }
+}
+
+int setValue(char* var, char* value, int* memorySizePtr){
     /*
      * Look for {var} in {shellMemory}. If not found, then we create a new {MEM} struct and add it to {shellMemory}
      * If found, the simply update the value of the {MEM} struct.
@@ -36,7 +44,7 @@ int setValue(char* var, char* value, struct MEM* shellMemory, int* memorySizePtr
     return 0;
 }
 
-int printValue(char* var, struct MEM* shellMemory, int* memorySizePtr){
+int printValue(char* var, int* memorySizePtr){
     /*
      * Look for {var} in {shellMemory}. If found, return its paired {value} otherwise return an error code
      *

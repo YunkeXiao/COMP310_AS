@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include "shellmemory.h"
 #include "MEM.h"
+#include "constants.h"
 
 char* fileName;
 
-int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memorySize){
+int interpreter(char** words, int wordCount, int* memorySize){
     /*
      * Given the parsed shell input, check which command is being called, if any, and apply its effects.
      * @param: words Parsed input
@@ -44,7 +45,7 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         if (wordCount != 3) {
             return 2;
         }
-        return setValue(words[1], words[2], shellMemory, memorySize);
+        return setValue(words[1], words[2], memorySize);
     }
 
     // print command
@@ -52,7 +53,7 @@ int interpreter(char** words, int wordCount, struct MEM* shellMemory, int* memor
         if (wordCount != 2) {
             return 2;
         }
-        return printValue(words[1], shellMemory, memorySize);
+        return printValue(words[1], memorySize);
     }
 
     // run command

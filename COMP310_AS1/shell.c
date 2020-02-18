@@ -6,6 +6,7 @@
 #include "shellmemory.h"
 #include "helper.h"
 #include "MEM.h"
+#include "constants.h"
 
 /*
  * Error Code Definitions
@@ -20,49 +21,25 @@
  * Error 7: Invalid command
  */
 
-#define MEM_SIZE 1000
-#define BUFFER_SIZE 502
-
 // Function declaration
 int processInput(char* input);
 int parseInput(char* input, char** words);
 int runFile(char* fileName);
 
-char prompt[100] = "$ \0";
 char userInput[BUFFER_SIZE];
 int errorCode;
-struct MEM* shellMemory;
 int memorySize = 0;
-
-char shellMeta[100] = "Turtle Shell\nVersion 1.0 Created On 01/15/2020\n";
-char welcomeMessage[5000] = "██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ██╗\n"
-                            "██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██║\n"
-                            "██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗      ██║\n"
-                            "██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝      ╚═╝\n"
-                            "╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗    ██╗\n"
-                            " ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝    ╚═╝\n";
-
-char quitMessage[5000] = "███████╗███████╗███████╗    ██╗   ██╗ ██████╗ ██╗   ██╗    ███████╗ ██████╗  ██████╗ ███╗   ██╗██╗\n"
-                         "██╔════╝██╔════╝██╔════╝    ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔════╝██╔═══██╗██╔═══██╗████╗  ██║██║\n"
-                         "███████╗█████╗  █████╗       ╚████╔╝ ██║   ██║██║   ██║    ███████╗██║   ██║██║   ██║██╔██╗ ██║██║\n"
-                         "╚════██║██╔══╝  ██╔══╝        ╚██╔╝  ██║   ██║██║   ██║    ╚════██║██║   ██║██║   ██║██║╚██╗██║╚═╝\n"
-                         "███████║███████╗███████╗       ██║   ╚██████╔╝╚██████╔╝    ███████║╚██████╔╝╚██████╔╝██║ ╚████║██╗\n"
-                         "╚══════╝╚══════╝╚══════╝       ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝\n";
 
 int main(){
     // Initialize shellMemory;
-    shellMemory = malloc(sizeof(struct MEM) * MEM_SIZE);
-    for (int i = 0; i < MEM_SIZE; i++){
-        struct MEM data = {.var = "", .value = ""};
-        shellMemory[i] = data;
-    }
+    initializeShellMemory();
 
-    printf("%s", welcomeMessage);
-    printf("%s", shellMeta);
+    printf("%s", WELCOME_MESSAGE);
+    printf("%s", OPEN_MESSAGE);
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
     while(1){
         errorCode = 0;
-        printf("%s", prompt);
+        printf("%s", PROMPT);
         fgets(userInput, BUFFER_SIZE, stdin);
         errorCode = processInput(userInput);
 
@@ -100,7 +77,7 @@ int main(){
             continue;
         }
         if (errorCode == -1 ){
-            printf("\n%s", quitMessage);
+            printf("\n%s", QUIT_MESSAGE);
             exit(99);
         }
     }
@@ -117,7 +94,7 @@ int runFile(char* fileName){
     if ((fp = fopen(fileName,"r"))){
         char buffer[BUFFER_SIZE];
         while((fgets(buffer, BUFFER_SIZE, fp)) != NULL){
-            printf("%s%s",prompt, buffer);
+            printf("%s%s",PROMPT, buffer);
             error = processInput(buffer);
             // Once and error is encountered, stop running the text file and return the error
             if (error != 0){
@@ -180,5 +157,6 @@ int processInput(char* input){
     // Pass the parsed user input into the iterpreter
     char* words[100];
     int wordCount = parseInput(input, words);
-    return interpreter(words, wordCount, shellMemory, &memorySize);
+    return interpreter(words, wordCount, &memorySize);
+    return 0;
 }
