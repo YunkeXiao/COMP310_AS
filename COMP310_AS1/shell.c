@@ -24,7 +24,7 @@
 // Function declaration
 int processInput(char* input);
 int parseInput(char* input, char** words);
-int runFile(char* fileName);
+int runFile(char* fileName, char** running_files);
 
 char userInput[BUFFER_SIZE];
 int errorCode;
@@ -36,6 +36,7 @@ int main(){
 
     printf("%s", WELCOME_MESSAGE);
     printf("%s", OPEN_MESSAGE);
+
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
     while(1){
         errorCode = 0;
@@ -45,7 +46,13 @@ int main(){
 
         // Error code 5 isn't an error, in fact it's to tell the shell that a file needs to be run
         if (errorCode == 5){
-            errorCode = runFile(getFileName());
+            // running_files keeps track of open files. If too many testfiles are run, the 'run' command ends
+            char* running_files[MAX_OPEN_FILE_COUNT];
+            for (int i = 0; i < MAX_OPEN_FILE_COUNT; i++){
+                running_files[i] = NULL;
+            }
+
+            errorCode = runFile(getFileName(), running_files);
         }
 
         if (errorCode == 1){
@@ -76,6 +83,10 @@ int main(){
             printf("ERROR 7: Invalid command.\n");
             continue;
         }
+        if (errorCode == 8){
+            printf("ERROR 8: Too many files running at the same time. Check for infinite recursion.\n");
+            continue;
+        }
         if (errorCode == -1 ){
             printf("\n%s", QUIT_MESSAGE);
             exit(99);
@@ -83,7 +94,7 @@ int main(){
     }
 }
 
-int runFile(char* fileName){
+int runFile(char* fileName, char** running_files){
     /*
      * Given a filename, read line by line and try to process them like you would a user input
      * @param: fileName String of the filename
@@ -91,11 +102,41 @@ int runFile(char* fileName){
      */
     FILE* fp;
     int error;
+    int too_many_files = 1;
+
+    // Check if there is too many running files
+    for(int i = 0; i < MAX_OPEN_FILE_COUNT; i++){
+        if (running_files[i] == NULL){
+            too_many_files = 0;
+        }
+    }
+    if (too_many_files){
+        return 8;
+    }
+
     if ((fp = fopen(fileName,"r"))){
         char buffer[BUFFER_SIZE];
+
         while((fgets(buffer, BUFFER_SIZE, fp)) != NULL){
+            // Add file to running file list
+            for (int i = 0; i < MAX_OPEN_FILE_COUNT; i++){
+                if (running_files[i] == NULL){
+                    running_files[i] = fileName;
+                }
+            }
+
+            // It's expected that every line ends with a newline. Format buffer to ensure that the last line also
+            // follows this rule
+            formatBuffer(buffer);
+
             printf("%s%s",PROMPT, buffer);
             error = processInput(buffer);
+
+            // If there's another run command in the test file, process that file
+            if (error == 5){
+                error = runFile(getFileName(), running_files);
+            }
+
             // Once and error is encountered, stop running the text file and return the error
             if (error != 0){
                 return error;
@@ -103,6 +144,15 @@ int runFile(char* fileName){
             // Reset buffer, otherwise new inputs may get corrupted
             memset(buffer, '\0', BUFFER_SIZE);
         }
+
+        // Upon a successful 'run' command, we remove the current file from the running files list, and return error
+        // code 0.
+        for (int i = 0; i < MAX_OPEN_FILE_COUNT; i++){
+            if (running_files[i] == fileName){
+                running_files[i] = NULL;
+            }
+        }
+
         return 0;
     } else {
         return 6;
@@ -127,7 +177,8 @@ int parseInput(char* input, char** words){
     while(input[index] != '\0' && index < BUFFER_SIZE){
         memset(word, '\0', BUFFER_SIZE);
 
-        for (tempIndex = 0; input[index] != ' ' && input[index] != '\n' && input[index] != '\0'; tempIndex++){
+        // Check that character is alphanumerical
+        for (tempIndex = 0; input[index] >= 33 && input[index] <= 126; tempIndex++){
             word[tempIndex] = (char)tolower(input[index]);
             index++;
         }
@@ -154,9 +205,8 @@ int processInput(char* input){
     if (inputTooLarge(input, BUFFER_SIZE)){
         return 1;
     }
-    // Pass the parsed user input into the iterpreter
+    // Pass the parsed user input into the interpreter
     char* words[100];
     int wordCount = parseInput(input, words);
     return interpreter(words, wordCount, &memorySize);
-    return 0;
 }
