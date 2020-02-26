@@ -1,5 +1,9 @@
-//
-// Created by kids_on_drugs on 26/02/20.
-//
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "kernel.h"
+#include "shell.h"
+
+int main(){
+    shellUI();
+}

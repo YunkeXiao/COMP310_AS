@@ -33,7 +33,7 @@ char userInput[BUFFER_SIZE];
 int errorCode;
 int memorySize = 0;
 
-int main(int argc, char *argv[]){
+int shellUI(){
     // Initialize shellMemory;
     initializeShellMemory();
 
