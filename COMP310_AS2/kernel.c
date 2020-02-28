@@ -33,6 +33,7 @@ int main(){
     rq->tail = tail;
 
 //    shellUI();
+    return 0;
 }
 
 void addToReady(struct PCB *aPCB){
@@ -82,5 +83,22 @@ int scheduler(){
     /*
      * Simulate the ready queue until all programs have completed
      */
-//    struct PCB *current =
+    struct PCB *current = removeHead();
+    cpu->IP = current->PC;
+
+    for (int time = 0; time < cpu->quanta; time++){
+        int errorCode = run(cpu->quanta, current->end);
+        if (errorCode == 1){
+            int start = current->start;
+            int end = current->end;
+            for(int i = start; i <= end; i++){
+                ram[i] = NULL;
+            }
+            free(current);
+        } else {
+            addToReady(current);
+        }
+    }
+
+    return 0;
 }
