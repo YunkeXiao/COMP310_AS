@@ -1,8 +1,6 @@
-//
-// Created by kids_on_drugs on 26/02/20.
-//
-
 #ifndef COMP310_AS2_RAM_H
 #define COMP310_AS2_RAM_H
+
+int addToRAM(FILE *p, int *start, int *end);
 
 #endif //COMP310_AS2_RAM_H

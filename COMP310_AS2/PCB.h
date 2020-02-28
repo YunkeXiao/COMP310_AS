@@ -4,7 +4,7 @@
 struct PCB{
     int PC;
     int start;
-    int ned;
+    int end;
 };
 
 #endif //COMP310_AS2_PCB_H
