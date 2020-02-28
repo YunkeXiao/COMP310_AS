@@ -8,10 +8,16 @@
 #include "pcb.h"
 #include "PCB.h"
 #include "READY_QUEUE.h"
+#include "CPU.h"
+#include "cpu.h"
 
 struct READY_QUEUE *rq;
+struct CPU *cpu;
 
 int main(){
+    // Initalize CPU
+    cpu = createCPU(CPU_QUANTA);
+
     // Initalize ready queue
     rq = malloc(sizeof(struct READY_QUEUE));
     struct PCB *head = malloc(sizeof(struct PCB));
@@ -28,7 +34,7 @@ int main(){
 //    shellUI();
 }
 
-void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq){
+void addToReady(struct PCB *aPCB){
     /*
      * Add a PCB to the tail of the ready queue
      *
@@ -42,6 +48,20 @@ void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq){
     prevTail->next = aPCB;
 }
 
+struct PCB* removeHead(){
+    /*
+     * Pop the head of the ready queue
+     *
+     * @return rq Ready Queue
+     */
+    struct PCB *head = rq->head;
+    struct PCB *headNext = rq->head->next;
+    struct PCB *replace = headNext->next;
+    head->next = replace;
+    replace->prev = head;
+    return headNext;
+}
+
 int myInit(char *filename){
     /*
      * Take a script, put each command into ram, create a PCB for the script, and add it to the ready queue
@@ -53,10 +73,13 @@ int myInit(char *filename){
     int start, end;
     FILE *file = fopen(filename, "r");
     errorCode = addToRAM(file, &start, &end);
-    addToReady(makePCB(start, end), rq);
+    addToReady(makePCB(start, end));
     return 0;
 }
 
 int scheduler(){
-
+    /*
+     * Simulate the ready queue until all programs have completed
+     */
+    struct PCB *current =
 }
