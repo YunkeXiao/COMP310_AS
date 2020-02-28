@@ -22,6 +22,7 @@
  * Error 7: Invalid command
  * ERROR 8: Too many running files
  * ERROR 9: EOF reached
+ * ERROR 10: Duplicate script loaded
  */
 
 // Function declaration

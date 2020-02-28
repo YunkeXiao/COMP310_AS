@@ -63,6 +63,24 @@ int interpreter(char** words, int wordCount, int* memorySize){
         fileName = words[1];
         return 5;
     }
+
+    if (strcmp(words[0],"exec") == 0){
+        if (wordCount > 3 || wordCount < 1){
+            return 2;
+        }
+
+        char * programs[3];
+        programs[0] = words[1];
+
+        char* duplicate = "";
+
+
+        for (int i = 2; i < wordCount; i++){
+            for (int j = 0; j < i; j++){
+                if
+            }
+        }
+    }
     return 7;
 }
 
