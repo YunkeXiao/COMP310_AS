@@ -24,17 +24,33 @@ int main(){
     rq->head = head;
     rq->tail = tail;
 
+    struct PCB *a = malloc(sizeof(struct PCB));
+    struct PCB *b = malloc(sizeof(struct PCB));
+
+    a = makePCB(0, 10);
+    a->PC = 0;
+
+    b = makePCB(10,20);
+    b->PC = 10;
+
+    addToReady(a,rq);
+    addToReady(b,rq);
 
 //    shellUI();
 }
 
 
 void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq){
-
-    struct PCB *prevTail = rq->tail->next;
-    rq->tail->next = aPCB;
-    aPCB->prev = rq->tail;
-    aPCB->next = prevTail;
-    prevTail->prev = aPCB;
+    /*
+     * Add a PCB to the tail of the ready queue
+     *
+     * @param aPCB New PCB
+     * @param rq Ready Queue
+     */
+    struct PCB *prevTail = rq->tail->prev;
+    rq->tail->prev = aPCB;
+    aPCB->next = rq->tail;
+    aPCB->prev = prevTail;
+    prevTail->next = aPCB;
 }
 
