@@ -4,10 +4,10 @@
 #include "MEM.h"
 #include "constants.h"
 
-struct MEM shellMemory[MEM_SIZE];
+struct MEM shellMemory[RAM_MEM_SIZE];
 
 void initializeShellMemory(){
-    for (int i = 0; i < MEM_SIZE; i++){
+    for (int i = 0; i < RAM_MEM_SIZE; i++){
         struct MEM data = {.var = "", .value = ""};
         shellMemory[i] = data;
     }
@@ -34,7 +34,7 @@ int setValue(char* var, char* value, int* memorySizePtr){
         }
     }
     // If memory size has reached maximum capacity, return appropriate error code
-    if (*memorySizePtr == MEM_SIZE){
+    if (*memorySizePtr == RAM_MEM_SIZE){
         return 3;
     }
 

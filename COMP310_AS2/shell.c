@@ -44,15 +44,13 @@ int shellUI(){
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
     while(1){
         errorCode = 0;
-//        printf("%s", PROMPT);
+        printf("%s", PROMPT);
 
         // Check for EOF when redirecting
         if (fgets(userInput, BUFFER_SIZE, stdin) == NULL){
             printf("ERROR 9: EOF reached\n%s", QUIT_MESSAGE);
             exit(99);
         }
-
-        printf("%s", PROMPT);
 
         // If reading inputs from file, then format inputs to emulate terminal input
         if (!isatty(fileno(stdin))){

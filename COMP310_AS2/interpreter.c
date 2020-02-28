@@ -75,11 +75,11 @@ int interpreter(char** words, int wordCount, int* memorySize){
         char* duplicate = "";
 
 
-        for (int i = 2; i < wordCount; i++){
-            for (int j = 0; j < i; j++){
-                if
-            }
-        }
+//        for (int i = 2; i < wordCount; i++){
+//            for (int j = 0; j < i; j++){
+//                if
+//            }
+//        }
     }
     return 7;
 }
