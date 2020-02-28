@@ -1,5 +1,6 @@
-//
-// Created by kids_on_drugs on 26/02/20.
-//
-
 #include "cpu.h"
+#include "CPU.h"
+
+struct *CPU createCPU(int quanta){
+
+}

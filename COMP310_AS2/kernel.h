@@ -4,6 +4,7 @@
 #include "PCB.h"
 #include "READY_QUEUE.h"
 
-void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq);
+int myInit(char *filename);
+int scheduler();
 
 #endif //COMP310_AS2_KERNEL_H

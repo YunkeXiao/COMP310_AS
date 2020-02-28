@@ -27,7 +27,7 @@ int addToRAM(FILE *p, int *start, int *end){
         currentPtr++;
     }
 
-//     Set end variable
+    // Set end variable
     *end = --currentPtr;
 
     for (int i = 0; i <= 2; i++){
@@ -35,5 +35,4 @@ int addToRAM(FILE *p, int *start, int *end){
     }
 
     return 0;
-
 }

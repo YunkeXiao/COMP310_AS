@@ -9,10 +9,11 @@
 #include "PCB.h"
 #include "READY_QUEUE.h"
 
+struct READY_QUEUE *rq;
 
 int main(){
     // Initalize ready queue
-    struct READY_QUEUE *rq = malloc(sizeof(struct READY_QUEUE));
+    rq = malloc(sizeof(struct READY_QUEUE));
     struct PCB *head = malloc(sizeof(struct PCB));
     struct PCB *tail = malloc(sizeof(struct PCB));
 
@@ -24,21 +25,8 @@ int main(){
     rq->head = head;
     rq->tail = tail;
 
-    struct PCB *a = malloc(sizeof(struct PCB));
-    struct PCB *b = malloc(sizeof(struct PCB));
-
-    a = makePCB(0, 10);
-    a->PC = 0;
-
-    b = makePCB(10,20);
-    b->PC = 10;
-
-    addToReady(a,rq);
-    addToReady(b,rq);
-
 //    shellUI();
 }
-
 
 void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq){
     /*
@@ -54,3 +42,21 @@ void addToReady(struct PCB *aPCB, struct READY_QUEUE *rq){
     prevTail->next = aPCB;
 }
 
+int myInit(char *filename){
+    /*
+     * Take a script, put each command into ram, create a PCB for the script, and add it to the ready queue
+     *
+     * @param aPCB New PCB
+     * @param rq Ready Queue
+     */
+    int errorCode = 0;
+    int start, end;
+    FILE *file = fopen(filename, "r");
+    errorCode = addToRAM(file, &start, &end);
+    addToReady(makePCB(start, end), rq);
+    return 0;
+}
+
+int scheduler(){
+
+}
