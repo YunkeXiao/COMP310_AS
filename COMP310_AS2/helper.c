@@ -19,7 +19,6 @@ int inputTooLarge(char* input, int limit){
 }
 
 void formatBuffer(char* buffer) {
-
     /*
      * We need the end of buffer to be a newline when reading a file in the 'run' command
      *
