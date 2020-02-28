@@ -65,21 +65,22 @@ int interpreter(char** words, int wordCount, int* memorySize){
     }
 
     if (strcmp(words[0],"exec") == 0){
-        if (wordCount > 3 || wordCount < 1){
+        if (wordCount > 4 || wordCount < 1){
             return 2;
         }
 
-        char * programs[3];
+        char *programs[3];
         programs[0] = words[1];
 
-        char* duplicate = "";
+        for (int i = 2; i < wordCount; i++){
+            for (int j = 0; j < i - 1; j++){
+                if (strcmp(words[i], programs[j]) == 0){
+                    printf("ERROR 10: Script %s already loaded\n", words[i]);
+                    return 10;
+                }
+            }
+        }
 
-
-//        for (int i = 2; i < wordCount; i++){
-//            for (int j = 0; j < i; j++){
-//                if
-//            }
-//        }
     }
     return 7;
 }
