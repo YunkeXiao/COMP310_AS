@@ -1,8 +1,8 @@
-//
-// Created by kids_on_drugs on 26/02/20.
-//
+#ifndef COMP310_AS2_PCB1_H
+#define COMP310_AS2_PCB1_H
 
-#ifndef COMP310_AS2_PCB_H
-#define COMP310_AS2_PCB_H
+#include "PCB.h"
+
+struct PCB* makePCB(int start, int end);
 
 #endif //COMP310_AS2_PCB_H

@@ -5,11 +5,14 @@
 #include "shell.h"
 #include "constants.h"
 #include "ram.h"
+#include "pcb.h"
+#include "PCB.h"
 
 int main(){
-    int start, end;
-    FILE *p = fopen("script1.txt", "r");
-    addToRAM(p, &start, &end);
+    struct PCB *pcb;
+    pcb = makePCB(20, 50);
+//    FILE *p = fopen("script1.txt", "r");
+//    addToRAM(p, &start, &end);
 //    shellUI();
 }
 

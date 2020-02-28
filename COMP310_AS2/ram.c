@@ -1,7 +1,6 @@
 #include <bits/types/FILE.h>
 #include <stdio.h>
 #include <string.h>
-#include "ram.h"
 #include "constants.h"
 
 char *ram[RAM_MEM_SIZE];
