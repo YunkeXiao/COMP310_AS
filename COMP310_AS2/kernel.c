@@ -13,6 +13,7 @@
 
 struct READY_QUEUE *rq;
 struct CPU *cpu;
+char *ram[RAM_MEM_SIZE];
 
 int main(){
     // Initalize CPU
@@ -81,5 +82,5 @@ int scheduler(){
     /*
      * Simulate the ready queue until all programs have completed
      */
-    struct PCB *current =
+//    struct PCB *current =
 }

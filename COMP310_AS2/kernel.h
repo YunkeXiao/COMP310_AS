@@ -7,4 +7,7 @@
 int myInit(char *filename);
 int scheduler();
 
+extern struct CPU *cpu;
+extern char *ram[];
+
 #endif //COMP310_AS2_KERNEL_H

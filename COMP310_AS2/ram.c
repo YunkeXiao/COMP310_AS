@@ -2,10 +2,18 @@
 #include <stdio.h>
 #include <string.h>
 #include "constants.h"
+#include "kernel.h"
 
-char *ram[RAM_MEM_SIZE];
+//char *ram[RAM_MEM_SIZE];
 
 int addToRAM(FILE *p, int *start, int *end){
+    /*
+     * Add script to RAM by assigning each command to a RAM cell
+     *
+     * @param p Script file pointer
+     * @param start Start address in the ram
+     * @param end End address in the ram
+     */
     char command[INSTRUCTION_BUFFER_SIZE];
     int currentPtr = 0;
 
