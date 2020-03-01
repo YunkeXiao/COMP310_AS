@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "cpu.h"
 #include "CPU.h"
 #include "shell.h"
@@ -20,7 +21,14 @@ struct CPU *createCPU(int quanta){
 int run(int quanta, int end){
     for (int time = 0; time < quanta; time++){
         // If the IP goes over the end or the quit command is read, end this run
-        if (cpu->IP > end || strcmp(ram[cpu->IP], "quit\n") == 0) {
+        char *buffer = strdup(ram[cpu->IP]);
+        int index;
+        for (index = 0; buffer[index] >= 33 && buffer[index] <= 126; index++){
+        }
+        buffer[index] = '\0';
+
+        if (cpu->IP > end || strcmp(buffer, "quit") == 0) {
+            printf("%squit\n", PROMPT);
             return 1;
         }
         // Update CUP's IR to contain the next command to run

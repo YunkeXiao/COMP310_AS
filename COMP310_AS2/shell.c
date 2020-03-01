@@ -204,9 +204,9 @@ int parseInput(char* input, char** words){
      * @param: words The string array that receives the parsed string
      */
     int wordCount = 0;
-    int index;
-    int tempIndex;
+    int index, tempIndex, seenSpace = 0;
     char word[BUFFER_SIZE];
+
 
     for (index = 0; input[index] == ' ' && index < BUFFER_SIZE; index++);  // Get rid of white space
 
@@ -215,13 +215,19 @@ int parseInput(char* input, char** words){
 
         // Check that character is alphanumerical
         for (tempIndex = 0; input[index] >= 33 && input[index] <= 126; tempIndex++){
-            word[tempIndex] = (char)tolower(input[index]);
+            // If the first word, i.e. the command type, then ignore case
+            if (!seenSpace) {
+                word[tempIndex] = (char) tolower(input[index]);
+            } else{
+                word[tempIndex] = input[index];
+            }
             index++;
         }
 
         // If we encounter a string of whitespace or newlines, we ignore them.
         if (tempIndex != 0){
             words[wordCount] = strdup(word);
+            seenSpace = 1;
             wordCount++;
         }
         index++;  // Index is currently on an invalid character, so we move it by one byte
