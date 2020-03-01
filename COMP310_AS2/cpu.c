@@ -26,6 +26,7 @@ int run(int quanta, int end){
         // Update CUP's IR to contain the next command to run
         memset(cpu->IR, '\0', 999);
         strcpy(cpu->IR, ram[cpu->IP]);
+        printf("%s%s", PROMPT, cpu->IR);
         int errorCode = processInput(cpu->IR);
         cpu->IP++;
 
@@ -41,36 +42,40 @@ int run(int quanta, int end){
         }
 
         if (errorCode == 1){
-            printf("ERROR 1: Input size is too large.\n");
+            printf("----------ERROR 1: Input size is too large----------\n\n");
             return 1;
         }
 
         if (errorCode == 2){
-            printf("ERROR 2: Wrong number of arguments.\n");
+            printf("----------ERROR 2: Wrong number of arguments----------\n\n");
             return 1;
         }
 
         if (errorCode == 3){
-            printf("ERROR 3: Maximum number of variables reached.\n");
+            printf("----------ERROR 3: Maximum number of variables reached----------\n\n");
             return 1;
         }
 
         if (errorCode == 4){
-            printf("ERROR 4: Variable not found.\n");
+            printf("----------ERROR 4: Variable not found----------\n\n");
             return 1;
         }
 
         if (errorCode == 6){
-            printf("ERROR 6: File not found.\n");
+            printf("----------ERROR 6: File not found----------\n\n");
             return 1;
         }
         if (errorCode == 7){
-            printf("ERROR 7: Invalid command.\n");
+            printf("----------ERROR 7: Invalid command----------\n\n");
             return 1;
         }
         if (errorCode == 8){
-            printf("ERROR 8: Too many files running at the same time. Check for infinite recursion.\n");
+            printf("----------ERROR 8: Too many files running at the same time. Check for infinite recursion----------\n\n");
             return 1;
+        }
+        if (errorCode == 11){
+            printf("----------ERROR 11: Insufficient RAM to load script(s)----------\n\n");
+            continue;
         }
     }
     return 0;

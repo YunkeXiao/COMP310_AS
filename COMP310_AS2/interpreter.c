@@ -25,11 +25,11 @@ int interpreter(char** words, int wordCount, int* memorySize){
         if (wordCount != 1) {
             return 2;
         }
-        printf("help                             Displays all the commands\n");
+        printf("\nhelp                             Displays all the commands\n");
         printf("quit                             Exits/terminates the shell with a farewell message\n");
         printf("set VAR STRING                   Assigns a value to shell memory\n");
         printf("print VAR                        Displays the STRING assigned to VAR\n");
-        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n");
+        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n\n");
         return 0;
     }
 
@@ -43,10 +43,21 @@ int interpreter(char** words, int wordCount, int* memorySize){
 
     // set command
     if (strcmp(words[0], "set") == 0) {
-        if (wordCount != 3) {
+        if (wordCount < 3){
             return 2;
         }
-        return setValue(words[1], words[2], memorySize);
+        char value[BUFFER_SIZE];
+        for (int i = 2; i < wordCount; i++){
+            strcat(value, words[i]);
+            if (i != wordCount - 1){
+                strcat(value, " ");
+            }
+        }
+//        if (wordCount != 3) {
+//            return 2;
+//        }
+//        printf("VALUE: %s\n", value);
+        return setValue(words[1], value, memorySize);
     }
 
     // print command
@@ -76,8 +87,8 @@ int interpreter(char** words, int wordCount, int* memorySize){
         for (int i = 2; i < wordCount; i++){
             for (int j = 0; j < i - 1; j++){
                 if (strcmp(words[i], programs[j]) == 0){
-                    printf("ERROR 10: Script %s already loaded.\n", words[i]);
-                    return 10;
+                    printf("----------ERROR 10: Script %s already loaded----------\n\n", words[i]);
+                    words[i] = NULL;
                 }
             }
         }
@@ -87,6 +98,10 @@ int interpreter(char** words, int wordCount, int* memorySize){
         }
         // Initalize ready queue and PCBs
         for (int i = 1; i < wordCount; i++){
+            // If duplicated script, ignore
+            if (!words[i]){
+                continue;
+            }
             int errorCode = myInit(words[i]);
             switch (errorCode){
                 case 1:

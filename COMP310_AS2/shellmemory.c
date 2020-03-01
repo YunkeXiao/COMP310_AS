@@ -38,7 +38,7 @@ int setValue(char* var, char* value, int* memorySizePtr){
         return 3;
     }
 
-    struct MEM newData = {.var = var, .value = value};
+    struct MEM newData = {.var = strdup(var), .value = strdup(value)};
     shellMemory[*memorySizePtr] = newData;
     *memorySizePtr += 1;
     return 0;

@@ -90,11 +90,14 @@ int scheduler() {
     /*
      * Simulate the ready queue until all programs have completed
      */
+    // The scheduler ends when the ready queue only consists of the head and the tail
     while (rq->head->next != rq->tail) {
+        // Dequeue the ready queue and run the script for the quanta
         struct PCB *current = removeHead();
         cpu->IP = current->PC;
         int errorCode = run(cpu->quanta, current->end);
 
+        // errorCode is 1 when the program exits prematurely, or ends
         if (errorCode == 1) {
             int start = current->start;
             int end = current->end;

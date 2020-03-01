@@ -44,12 +44,13 @@ int shellUI(){
 
     // Unless user closes the shell or errorCode is -1, the program runs infinitely
     while(1){
+        // Reset errorCode for the next command and print user prompt
         errorCode = 0;
         printf("%s", PROMPT);
 
-        // Check for EOF when redirecting
         if (fgets(userInput, BUFFER_SIZE, stdin) == NULL){
-            printf("ERROR 9: EOF reached\n%s", QUIT_MESSAGE);
+            printf("----------ERROR 9: EOF reached----------\n\n%s", QUIT_MESSAGE);
+            FILE *tty = fopen("/dev/tty", "r");
             exit(99);
         }
 
@@ -78,39 +79,39 @@ int shellUI(){
         }
 
         if (errorCode == 1){
-            printf("ERROR 1: Input size is too large.\n");
+            printf("----------ERROR 1: Input size is too large----------\n\n");
             continue;
         }
 
         if (errorCode == 2){
-            printf("ERROR 2: Wrong number of arguments.\n");
+            printf("----------ERROR 2: Wrong number of arguments----------\n\n");
             continue;
         }
 
         if (errorCode == 3){
-            printf("ERROR 3: Maximum number of variables reached.\n");
+            printf("----------ERROR 3: Maximum number of variables reached----------\n\n");
             continue;
         }
 
         if (errorCode == 4){
-            printf("ERROR 4: Variable not found.\n");
+            printf("----------ERROR 4: Variable not found----------\n\n");
             continue;
         }
 
         if (errorCode == 6){
-            printf("ERROR 6: File not found.\n");
+            printf("----------ERROR 6: File not found----------\n\n");
             continue;
         }
         if (errorCode == 7){
-            printf("ERROR 7: Invalid command.\n");
+            printf("----------ERROR 7: Invalid command----------\n\n");
             continue;
         }
         if (errorCode == 8){
-            printf("ERROR 8: Too many files running at the same time. Check for infinite recursion.\n");
+            printf("----------ERROR 8: Too many files running at the same time. Check for infinite recursion----------\n\n");
             continue;
         }
         if (errorCode == 11){
-            printf("ERROR 11: Insufficient RAM to load script(s).\n");
+            printf("----------ERROR 11: Insufficient RAM to load script(s)----------\n\n");
             continue;
         }
         if (errorCode == -1 ){
@@ -140,10 +141,10 @@ int runFile(char* fileName, char** running_files){
         return 8;
     }
 
-    printf("----------RUNNING %s----------\n", fileName);
-
     if ((fp = fopen(fileName,"r"))){
         char buffer[BUFFER_SIZE];
+
+        printf("\n----------RUNNING %s----------\n", fileName);
 
         while((fgets(buffer, BUFFER_SIZE, fp)) != NULL){
             // Add file to running file list
