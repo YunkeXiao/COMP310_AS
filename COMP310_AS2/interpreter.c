@@ -25,11 +25,14 @@ int interpreter(char** words, int wordCount, int* memorySize){
         if (wordCount != 1) {
             return 2;
         }
-        printf("\nhelp                             Displays all the commands\n");
+        printf("%s", LINE);
+        printf("help                             Displays all the commands\n");
         printf("quit                             Exits/terminates the shell with a farewell message\n");
         printf("set VAR STRING                   Assigns a value to shell memory\n");
         printf("print VAR                        Displays the STRING assigned to VAR\n");
-        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n\n");
+        printf("run SCRIPT.TXT                   Executes the file SCRIPT.TXT\n");
+        printf("%s", LINE);
+
         return 0;
     }
 
@@ -53,10 +56,6 @@ int interpreter(char** words, int wordCount, int* memorySize){
                 strcat(value, " ");
             }
         }
-//        if (wordCount != 3) {
-//            return 2;
-//        }
-//        printf("VALUE: %s\n", value);
         return setValue(words[1], value, memorySize);
     }
 

@@ -29,7 +29,7 @@ int setValue(char* var, char* value, int* memorySizePtr){
     for(int i = 0; i < *memorySizePtr; i++){
         data = &shellMemory[i];
         if (strcmp(data->var, var) == 0){
-            data->value = value;
+            data->value = strdup(value);
             return 0;
         }
     }
@@ -58,7 +58,9 @@ int printValue(char* var, int* memorySizePtr){
     for(int i = 0; i < *memorySizePtr; i++){
         data = shellMemory[i];
         if (strcmp(data.var, var) == 0){
+            printf("%s", LINE);
             printf("VAR: %s\nVALUE: %s\n", data.var, data.value);
+            printf("%s", LINE);
             return 0;
         }
     }
