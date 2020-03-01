@@ -15,7 +15,7 @@ struct READY_QUEUE *rq;
 struct CPU *cpu;
 char *ram[RAM_MEM_SIZE];
 
-int main(){
+int main() {
     // Initalize CPU
     cpu = createCPU(CPU_QUANTA);
 
@@ -32,11 +32,12 @@ int main(){
     rq->head = head;
     rq->tail = tail;
 
-//    shellUI();
+    // Run shell UI
+    shellUI();
     return 0;
 }
 
-void addToReady(struct PCB *aPCB){
+void addToReady(struct PCB *aPCB) {
     /*
      * Add a PCB to the tail of the ready queue
      *
@@ -50,7 +51,7 @@ void addToReady(struct PCB *aPCB){
     prevTail->next = aPCB;
 }
 
-struct PCB* removeHead(){
+struct PCB *removeHead() {
     /*
      * Pop the head of the ready queue
      *
@@ -64,38 +65,45 @@ struct PCB* removeHead(){
     return headNext;
 }
 
-int myInit(char *filename){
+int myInit(char *filename) {
     /*
      * Take a script, put each command into ram, create a PCB for the script, and add it to the ready queue
      *
      * @param aPCB New PCB
      * @param rq Ready Queue
+     * @errorCode
      */
     int errorCode = 0;
     int start, end;
     FILE *file = fopen(filename, "r");
-    errorCode = addToRAM(file, &start, &end);
-    addToReady(makePCB(start, end));
-    return 0;
+    // If file doesn't exist, return errorCode 1
+    if (!file){
+        return 1;
+    } else {
+        errorCode = addToRAM(file, &start, &end);
+        addToReady(makePCB(start, end));
+        return errorCode;
+    }
 }
 
-int scheduler(){
+int scheduler() {
     /*
      * Simulate the ready queue until all programs have completed
      */
-    struct PCB *current = removeHead();
-    cpu->IP = current->PC;
-
-    for (int time = 0; time < cpu->quanta; time++){
+    while (rq->head->next != rq->tail) {
+        struct PCB *current = removeHead();
+        cpu->IP = current->PC;
         int errorCode = run(cpu->quanta, current->end);
-        if (errorCode == 1){
+
+        if (errorCode == 1) {
             int start = current->start;
             int end = current->end;
-            for(int i = start; i <= end; i++){
+            for (int i = start; i <= end; i++) {
                 ram[i] = NULL;
             }
             free(current);
         } else {
+            current->PC = cpu->IP;
             addToReady(current);
         }
     }

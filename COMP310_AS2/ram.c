@@ -4,8 +4,6 @@
 #include "constants.h"
 #include "kernel.h"
 
-//char *ram[RAM_MEM_SIZE];
-
 int addToRAM(FILE *p, int *start, int *end){
     /*
      * Add script to RAM by assigning each command to a RAM cell
@@ -18,13 +16,13 @@ int addToRAM(FILE *p, int *start, int *end){
     int currentPtr = 0;
 
     // Get first available RAM cell
-    while(ram[currentPtr]){
+    while(ram[currentPtr] != NULL){
         currentPtr++;
     }
 
     // If memory overflows, then stop operation
     if (currentPtr >= RAM_MEM_SIZE){
-        return 1;
+        return 2;
     }
     // Set start variable
     *start = currentPtr;
@@ -37,10 +35,6 @@ int addToRAM(FILE *p, int *start, int *end){
 
     // Set end variable
     *end = --currentPtr;
-
-    for (int i = 0; i <= 2; i++){
-        printf("Command: %s", ram[i]);
-    }
 
     return 0;
 }

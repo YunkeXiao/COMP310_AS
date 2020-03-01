@@ -3,6 +3,8 @@
 #include "shellmemory.h"
 #include "MEM.h"
 #include "constants.h"
+#include "kernel.h"
+#include "ram.h"
 
 char* fileName;
 
@@ -68,19 +70,36 @@ int interpreter(char** words, int wordCount, int* memorySize){
         if (wordCount > 4 || wordCount < 1){
             return 2;
         }
-
+        // Check if same script has been loaded multiple times
         char *programs[3];
         programs[0] = words[1];
-
         for (int i = 2; i < wordCount; i++){
             for (int j = 0; j < i - 1; j++){
                 if (strcmp(words[i], programs[j]) == 0){
-                    printf("ERROR 10: Script %s already loaded\n", words[i]);
+                    printf("ERROR 10: Script %s already loaded.\n", words[i]);
                     return 10;
                 }
             }
         }
-
+        // Initalize RAM to empty
+        for (int i = 0; i < RAM_MEM_SIZE; i++){
+            ram[i] = NULL;
+        }
+        // Initalize ready queue and PCBs
+        for (int i = 1; i < wordCount; i++){
+            int errorCode = myInit(words[i]);
+            switch (errorCode){
+                case 1:
+                    return 6;
+                case 2:
+                    return 11;
+                default:
+                    continue;
+            }
+        }
+        // Run programs
+        scheduler();
+        return 0;
     }
     return 7;
 }

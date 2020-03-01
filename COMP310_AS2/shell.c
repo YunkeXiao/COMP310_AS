@@ -23,6 +23,7 @@
  * ERROR 8: Too many running files
  * ERROR 9: EOF reached
  * ERROR 10: Duplicate script loaded
+ * ERROR 11: Insufficient RAM memory space
  */
 
 // Function declaration
@@ -108,6 +109,10 @@ int shellUI(){
             printf("ERROR 8: Too many files running at the same time. Check for infinite recursion.\n");
             continue;
         }
+        if (errorCode == 11){
+            printf("ERROR 11: Insufficient RAM to load script(s).\n");
+            continue;
+        }
         if (errorCode == -1 ){
             printf("\n%s", QUIT_MESSAGE);
             exit(99);
@@ -135,6 +140,8 @@ int runFile(char* fileName, char** running_files){
         return 8;
     }
 
+    printf("----------RUNNING %s----------\n", fileName);
+
     if ((fp = fopen(fileName,"r"))){
         char buffer[BUFFER_SIZE];
 
@@ -143,6 +150,7 @@ int runFile(char* fileName, char** running_files){
             for (int i = 0; i < MAX_OPEN_FILE_COUNT; i++){
                 if (running_files[i] == NULL){
                     running_files[i] = fileName;
+                    break;
                 }
             }
 
@@ -156,6 +164,11 @@ int runFile(char* fileName, char** running_files){
             // If there's another run command in the test file, process that file
             if (error == 5){
                 error = runFile(getFileName(), running_files);
+            }
+
+            // If a quit command if encountered in a run command, then stop reading instructions
+            if (error == -1){
+                break;
             }
 
             // Once and error is encountered, stop running the text file and return the error
@@ -174,6 +187,7 @@ int runFile(char* fileName, char** running_files){
             }
         }
 
+        printf("----------CLOSING %s----------\n", fileName);
         return 0;
     } else {
         return 6;
@@ -224,14 +238,12 @@ int processInput(char* input){
      */
 
     // Check for user input size
-    if (inputTooLarge(input, BUFFER_SIZE)){
+    if (strlen(input) > BUFFER_SIZE){
         return 1;
     }
     // Pass the parsed user input into the interpreter
     char* words[100];
     memset(words, '\0', 100);
-
     int wordCount = parseInput(input, words);
-
     return interpreter(words, wordCount, &memorySize);
 }
