@@ -81,13 +81,18 @@ int interpreter(char** words, int wordCount, int* memorySize){
             return 2;
         }
         // Check if same script has been loaded multiple times
+
+
         char *programs[3];
         programs[0] = words[1];
+
         for (int i = 2; i < wordCount; i++){
             for (int j = 0; j < i - 1; j++){
                 if (strcmp(words[i], programs[j]) == 0){
                     printf("----------ERROR 10: Script %s already loaded----------\n\n", words[i]);
                     words[i] = NULL;
+                } else {
+                    programs[i - 1] = words[i];
                 }
             }
         }

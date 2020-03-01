@@ -188,7 +188,7 @@ int runFile(char* fileName, char** running_files){
             }
         }
 
-        printf("----------CLOSING %s----------\n", fileName);
+        printf("----------CLOSING %s----------\n\n", fileName);
         return 0;
     } else {
         return 6;
