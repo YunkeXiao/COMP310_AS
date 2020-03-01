@@ -9,6 +9,12 @@ void addToReady(struct PCB *aPCB);
 int myInit(char *filename);
 int scheduler();
 
+struct PCB* getHead(struct READY_QUEUE *rq);
+struct PCB* getTail(struct READY_QUEUE *rq);
+
+void setHead(struct READY_QUEUE *rq, struct PCB *head);
+void setTail(struct READY_QUEUE *rq, struct PCB *tail);
+
 extern struct CPU *cpu;
 extern char *ram[];
 

@@ -88,3 +88,17 @@ int run(int quanta, int end){
     }
     return 0;
 }
+
+//----------GETTERS----------
+void setIP(struct CPU *cpu, int ip){
+    cpu->IP = ip;
+}
+
+//----------SETTERS----------
+int getIP(struct CPU *cpu){
+    return cpu->IP;
+}
+
+int getQuanta(struct CPU *cpu){
+    return cpu->quanta;
+}

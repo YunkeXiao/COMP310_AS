@@ -1,5 +1,5 @@
-#ifndef COMP310_AS2_CPU1_H
-#define COMP310_AS2_CPU1_H
+#ifndef COMP310_AS2_CPU_H
+#define COMP310_AS2_CPU_H
 
 #include "constants.h"
 

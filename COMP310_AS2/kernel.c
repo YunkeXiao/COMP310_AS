@@ -10,6 +10,7 @@
 #include "READY_QUEUE.h"
 #include "CPU.h"
 #include "cpu.h"
+#include "ready_queue.h"
 
 struct READY_QUEUE *rq;
 struct CPU *cpu;
@@ -23,14 +24,13 @@ int main() {
     rq = malloc(sizeof(struct READY_QUEUE));
     struct PCB *head = malloc(sizeof(struct PCB));
     struct PCB *tail = malloc(sizeof(struct PCB));
+    setNext(head, tail);
+    setPrev(head, NULL);
+    setNext(tail, NULL);
+    setPrev(tail, head);
 
-    head->prev = NULL;
-    head->next = tail;
-    tail->prev = head;
-    tail->next = NULL;
-
-    rq->head = head;
-    rq->tail = tail;
+    setHead(rq, head);
+    setTail(rq, tail);
 
     // Run shell UI
     shellUI();
@@ -44,11 +44,12 @@ void addToReady(struct PCB *aPCB) {
      * @param aPCB New PCB
      * @param rq Ready Queue
      */
-    struct PCB *prevTail = rq->tail->prev;
-    rq->tail->prev = aPCB;
-    aPCB->next = rq->tail;
-    aPCB->prev = prevTail;
-    prevTail->next = aPCB;
+    struct PCB *tail = getTail(rq);
+    struct PCB *prevTail = getPrev(tail);
+    setPrev(tail, aPCB);
+    setNext(prevTail, aPCB);
+    setNext(aPCB, tail);
+    setPrev(aPCB, prevTail);
 }
 
 struct PCB *removeHead() {
@@ -57,11 +58,11 @@ struct PCB *removeHead() {
      *
      * @return rq Ready Queue
      */
-    struct PCB *head = rq->head;
-    struct PCB *headNext = rq->head->next;
-    struct PCB *replace = headNext->next;
-    head->next = replace;
-    replace->prev = head;
+    struct PCB *head = getHead(rq);
+    struct PCB *headNext = getNext(head);
+    struct PCB *replace = getNext(headNext);
+    setNext(head, replace);
+    setPrev(replace, head);
     return headNext;
 }
 
@@ -90,26 +91,27 @@ int scheduler() {
     /*
      * Simulate the ready queue until all programs have completed
      */
+    struct PCB *head = getHead(rq);
+    struct PCB *tail = getTail(rq);
     // The scheduler ends when the ready queue only consists of the head and the tail
-    while (rq->head->next != rq->tail) {
+    while (getNext(head) != tail) {
         // Dequeue the ready queue and run the script for the quanta
         struct PCB *current = removeHead();
-        cpu->IP = current->PC;
-        int errorCode = run(cpu->quanta, current->end);
+        setIP(cpu, getPC(current));
+        int errorCode = run(getQuanta(cpu), getEnd(current));
 
         // errorCode is 1 when the program exits prematurely, or ends
         if (errorCode == 1) {
-            int start = current->start;
-            int end = current->end;
+            int start = getStart(current);
+            int end = getEnd(current);
             for (int i = start; i <= end; i++) {
                 ram[i] = NULL;
             }
             free(current);
         } else {
-            current->PC = cpu->IP;
+            setPC(current, getIP(cpu));
             addToReady(current);
         }
     }
-
     return 0;
 }
