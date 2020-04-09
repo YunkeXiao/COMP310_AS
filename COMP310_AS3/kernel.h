@@ -4,6 +4,8 @@
 #include "PCB_DS.h"
 #include "READY_QUEUE_DS.h"
 
+void boot();
+int kernel();
 struct PCB* removeHead();
 void addToReady(struct PCB *aPCB);
 int myInit(char *filename);

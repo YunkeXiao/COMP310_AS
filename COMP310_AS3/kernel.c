@@ -16,7 +16,20 @@ struct READY_QUEUE *rq;
 struct CPU *cpu;
 char *ram[RAM_MEM_SIZE];
 
-int main() {
+int main(){
+    int error = 0;
+    boot();
+    error = kernel();
+    return error;
+}
+
+void boot(){
+    initializeRAM();
+    system("mkdir -p BackingStore");
+    system("rm -rf BackingStore/*");
+}
+
+int kernel() {
     // Initalize CPU
     cpu = createCPU(CPU_QUANTA);
 

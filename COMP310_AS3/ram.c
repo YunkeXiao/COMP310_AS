@@ -38,3 +38,9 @@ int addToRAM(FILE *p, int *start, int *end){
 
     return 0;
 }
+
+void initializeRAM(){
+    for (int i = 0; i < RAM_MEM_SIZE; i++){
+        ram[i] = NULL;
+    }
+}
