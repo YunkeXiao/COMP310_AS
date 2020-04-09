@@ -11,6 +11,7 @@
 #include "CPU_DS.h"
 #include "cpu.h"
 #include "ready_queue.h"
+#include "memorymanager.h"
 
 struct READY_QUEUE *rq;
 struct CPU *cpu;
@@ -19,8 +20,10 @@ char *ram[RAM_MEM_SIZE];
 int main(){
     int error = 0;
     boot();
-    error = kernel();
-    return error;
+    FILE *fp = fopen("BackingStore/temp.txt", "r");
+//    printf("Frame needed: %d", countTotalPages(fp));
+//    error = kernel();
+//    return error;
 }
 
 void boot(){
@@ -85,7 +88,7 @@ int myInit(char *filename) {
      *
      * @param aPCB New PCB
      * @param rq Ready Queue
-     * @errorCode
+     * @errorCode 1: File doesn't exist
      */
     int errorCode = 0;
     int start, end;
@@ -94,6 +97,7 @@ int myInit(char *filename) {
     if (!file){
         return 1;
     } else {
+        int launcherCode = launcher(file);
         errorCode = addToRAM(file, &start, &end);
         addToReady(makePCB(start, end));
         return errorCode;

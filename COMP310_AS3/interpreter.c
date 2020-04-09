@@ -81,8 +81,6 @@ int interpreter(char** words, int wordCount, int* memorySize){
             return 2;
         }
         // Check if same script has been loaded multiple times
-
-
         char *programs[3];
         programs[0] = words[1];
 
