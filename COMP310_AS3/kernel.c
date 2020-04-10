@@ -92,18 +92,27 @@ int myInit(char *filename) {
      * @errorCode 1: File doesn't exist
      */
     int errorCode = 0;
-//    int start, end;
     FILE *file = fopen(filename, "r");
     // If file doesn't exist, return errorCode 1
     if (!file){
         return 1;
     } else {
         // Check if program can be loaded
-        if(launcher(file) == -1){
-            errorCode = 1;
+        errorCode = launcher(file);
+        switch(errorCode){
+            case -1:
+                errorCode = 6;
+                break;
+            case -2:
+                errorCode = 12;
+                break;
+            case -3:
+                errorCode = 13;
+                break;
+            default:
+                errorCode = 0;
         }
-//        errorCode = addToRAM(file, &start, &end);
-//        addToReady(makePCB(start, end));
+        fclose(file);
         return errorCode;
     }
 }

@@ -2,9 +2,9 @@
 #define COMP310_AS2_PCB_H
 
 struct PCB{
-    int PC;
-    int PC_page;
-    int PC_offset;
+    int PC; // Current instruction
+    int PC_page; // Current page
+    int PC_offset; // Frame offset
     int pages_max;
     int pageTable[10];
     int PID;

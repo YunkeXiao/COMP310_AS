@@ -13,18 +13,24 @@ int launcher(FILE *filePointer){
     FILE *BSPointer;
     int PID = -1;
 
+    // Check for errors
     if (!filePointer){
         return -1;
+    } else if (countTotalPages(filePointer) == 0){
+        return -2;
+    } else if (countTotalPages(filePointer) > 10){
+        return -3;
     }
+
     // Check which file is to be created (p0.txt for the first program, p1.txt for the second, p3.txt for the third)
     if (access("BackingStore/p0.txt", F_OK) == -1){
-        BSPointer = fopen("BackingStore/p0.txt", "w");
+        BSPointer = fopen("BackingStore/p0.txt", "w+");
         PID = 0;
     } else if (access("BackingStore/p1.txt", F_OK) == -1){
-        BSPointer = fopen("BackingStore/p1.txt", "w");
+        BSPointer = fopen("BackingStore/p1.txt", "w+");
         PID = 1;
     } else {
-        BSPointer = fopen("BackingStore/p2.txt", "w");
+        BSPointer = fopen("BackingStore/p2.txt", "w+");
         PID = 2;
     }
 
@@ -38,8 +44,39 @@ int launcher(FILE *filePointer){
     rewind(BSPointer);
 
     struct PCB *aPCB = makePCB(BSPointer, PID);
-
+    if(aPCB->pages_max == 1){
+        addPagesToRAM(BSPointer, aPCB, 0, 1);
+    } else {
+        addPagesToRAM(BSPointer, aPCB, 0, aPCB->pages_max);
+    }
     return 1;
+}
+
+int addPagesToRAM(FILE* filePointer, struct PCB *aPCB, int pageNumber, int pageCount){
+    /*
+     * Add pages of a given PCB to RAM
+     *
+     * @param filePointer File pointer to the program
+     * @param aPCB PCB in question
+     * @param pageCount Number of pages to add
+     * @return int Frame number
+     */
+    for(int i = 0; i < pageCount; i++){
+        // Find frame to put the page in
+        int isVictim = 0;
+        int frame = findFrame();
+        if (frame == -1){
+            frame = findVictim(aPCB);
+            isVictim = 1;
+        }
+
+        // PC_page must match the most recent page that's loaded into RAM
+        if (i != 0 && pageNumber == 0){
+            aPCB->PC_page++;
+        }
+        loadPage(pageNumber + i, filePointer, frame);
+        updatePageTable(aPCB, pageNumber + i, frame, isVictim);
+    }
 }
 
 int countTotalPages(FILE *filePointer){
@@ -92,7 +129,7 @@ int findFrame(){
      * @return int Frame number
      */
     for(int i = 0; i < 10; i++){
-        if (ram[i * 4] == NULL){
+        if (ram[(i * 4)] == NULL){
             return i;
         }
     }
@@ -107,10 +144,18 @@ int findVictim(struct PCB *p){
      * @return int Frame number
      */
     int frame;
-    while(1) {
+    int flag = 1;
+    while(flag) {
         // Formula to get a random value between 0 and 9 inclusive
+        flag = 0;
         frame = 0 + rand() / (RAND_MAX / (9 - 0 + 1) + 1);
-        if (frame != p->PC_page){
+        for(int i = 0; i < 10; i++){
+            if (p->pageTable[i] == frame) {
+                flag = 1;
+                break;
+            }
+        }
+        if (!flag){
             return frame;
         }
     }
@@ -129,7 +174,7 @@ int updatePageTable(struct PCB *p, int pageNumber, int frameNumber, int victimFr
         // and remove it from said pageTable before updating our current PCB's pageTable
         struct PCB *current = getHead(rq)->next;
         int found = 0;
-        while (current != getTail(rq)) {
+        while (current != getTail(rq) && current != p) {
             for (int i = 0; i < 10; i++) {
                 if (current->pageTable[i] == frameNumber) {
                     current->pageTable[i] = -1;

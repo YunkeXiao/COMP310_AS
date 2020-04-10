@@ -101,15 +101,14 @@ int interpreter(char** words, int wordCount, int* memorySize){
                 continue;
             }
             int errorCode = myInit(words[i]);
-            switch (errorCode){
-                case 1:
-                    return 6;
-                case 2:
-                    return 11;
-                default:
-                    continue;
+            if (errorCode != 0){
+                return errorCode;
             }
         }
+        //DEBUG
+//        for (int i = 0; i < 40; i++){
+//            printf("Instruction %i: %s\n", i + 1, ram[i]);
+//        }
         // Run programs
 //        scheduler();
         return 0;

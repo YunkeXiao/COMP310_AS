@@ -5,6 +5,7 @@
 
 int launcher(FILE *filePointer);
 int countTotalPages(FILE *filePointer);
+int addPagesToRAM(FILE* filePointer, struct PCB *aPCB, int pageNumber, int pageCount);
 void loadPage(int pageNumber, FILE* filePointer, int frameNumber);
 int findFrame();
 int findVictim(struct PCB *p);

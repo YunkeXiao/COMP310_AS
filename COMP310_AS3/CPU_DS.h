@@ -5,6 +5,7 @@
 
 struct CPU{
     int IP;
+    int offset;
     char IR[INSTRUCTION_BUFFER_SIZE];
     int quanta;
 };

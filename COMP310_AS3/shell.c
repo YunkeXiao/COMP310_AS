@@ -24,6 +24,8 @@
  * ERROR 9: EOF reached
  * ERROR 10: Duplicate script loaded
  * ERROR 11: Unable to create BackingStore files
+ * ERROR 12: Empty program
+ * Error 13: Program too large
  */
 
 // Function declaration
@@ -112,6 +114,14 @@ int shellUI(){
         }
         if (errorCode == 11){
             printf("----------ERROR 11: Unable to create BackingStore files----------\n\n");
+            continue;
+        }
+        if (errorCode == 12){
+            printf("----------ERROR 12: Empty program----------\n\n");
+            continue;
+        }
+        if (errorCode == 13){
+            printf("----------ERROR 13: Program too large. A maximum of 40 instructions per program is allowed----------\n\n");
             continue;
         }
         if (errorCode == -1 ){
