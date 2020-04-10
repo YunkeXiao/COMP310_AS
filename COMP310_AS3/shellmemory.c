@@ -58,7 +58,7 @@ int printValue(char* var, int* memorySizePtr){
     for(int i = 0; i < *memorySizePtr; i++){
         data = shellMemory[i];
         if (strcmp(data.var, var) == 0){
-            printf("\nVAR: %s\nVALUE: %s\n\n", data.var, data.value);
+            printf("VAR: %s\nVALUE: %s\n", data.var, data.value);
             return 0;
         }
     }

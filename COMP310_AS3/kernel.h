@@ -6,7 +6,6 @@
 
 void boot();
 int kernel();
-struct PCB* removeHead();
 void addToReady(struct PCB *aPCB);
 int myInit(char *filename);
 int scheduler();

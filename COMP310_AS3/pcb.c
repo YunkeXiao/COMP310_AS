@@ -17,6 +17,7 @@ struct PCB* makePCB(FILE *filePointer, int PID){
     aPCB->PC_offset = 0;
     aPCB->pages_max = countTotalPages(filePointer);
     aPCB->PID = PID;
+    aPCB->end = countTotalInstructions(filePointer);
     for(int i = 0; i < 10; i++){
         aPCB->pageTable[i] = -1;
     }

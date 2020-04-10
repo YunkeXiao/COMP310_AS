@@ -17,7 +17,7 @@
  * Error 2: Wrong number of arguments
  * Error 3: Max variable count
  * Error 4: Variable not found
- * Error 5: run command
+ * Error 5: "run" command
  * Error 6: File not found
  * Error 7: Invalid command
  * ERROR 8: Too many running files

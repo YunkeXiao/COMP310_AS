@@ -1,4 +1,4 @@
-#include <bits/types/FILE.h>
+//#include <bits/types/FILE.h>
 #include <stdio.h>
 #include "memorymanager.h"
 #include "constants.h"
@@ -8,6 +8,7 @@
 #include <zconf.h>
 #include "ram.h"
 #include "pcb.h"
+#include <stdlib.h>
 
 int launcher(FILE *filePointer){
     FILE *BSPointer;
@@ -18,7 +19,7 @@ int launcher(FILE *filePointer){
         return -1;
     } else if (countTotalPages(filePointer) == 0){
         return -2;
-    } else if (countTotalPages(filePointer) > 10){
+    } else if (countTotalPages(filePointer) > PAGE_TABLE_SIZE){
         return -3;
     }
 
@@ -44,11 +45,14 @@ int launcher(FILE *filePointer){
     rewind(BSPointer);
 
     struct PCB *aPCB = makePCB(BSPointer, PID);
+    addToReady(aPCB);
+
     if(aPCB->pages_max == 1){
         addPagesToRAM(BSPointer, aPCB, 0, 1);
     } else {
-        addPagesToRAM(BSPointer, aPCB, 0, aPCB->pages_max);
+        addPagesToRAM(BSPointer, aPCB, 0, 2);
     }
+    fclose(BSPointer);
     return 1;
 }
 
@@ -70,13 +74,29 @@ int addPagesToRAM(FILE* filePointer, struct PCB *aPCB, int pageNumber, int pageC
             isVictim = 1;
         }
 
-        // PC_page must match the most recent page that's loaded into RAM
-        if (i != 0 && pageNumber == 0){
-            aPCB->PC_page++;
-        }
         loadPage(pageNumber + i, filePointer, frame);
         updatePageTable(aPCB, pageNumber + i, frame, isVictim);
     }
+}
+
+int countTotalInstructions(FILE *filePointer) {
+    /*
+     * Count the number of instructions in the program
+     *
+     * @param filePointer File pointer to the program
+     * @return int Number of instructions
+     */
+    // Invalid file pointer
+    if (!filePointer) {
+        return -1;
+    }
+    int lineCount = 0;
+    char buffer[BUFFER_SIZE];
+    while (fgets(buffer, sizeof(buffer), filePointer)) {
+        lineCount++;
+    }
+    rewind(filePointer);
+    return lineCount;
 }
 
 int countTotalPages(FILE *filePointer){
@@ -86,17 +106,7 @@ int countTotalPages(FILE *filePointer){
      * @param filePointer File pointer to the program
      * @return int Number of pages
      */
-    // Invalid file pointer
-    if (!filePointer){
-        return -1;
-    }
-    int lineCount = 0;
-    char buffer[BUFFER_SIZE];
-    while(fgets(buffer,sizeof(buffer), filePointer)){
-        lineCount++;
-    }
-    rewind(filePointer);
-    return (lineCount + 3)/4;
+    return (countTotalInstructions(filePointer) + RAM_FRAME_SIZE - 1)/RAM_FRAME_SIZE;
 }
 
 void loadPage(int pageNumber, FILE* filePointer, int frameNumber){
@@ -109,10 +119,10 @@ void loadPage(int pageNumber, FILE* filePointer, int frameNumber){
      */
     char buffer[INSTRUCTION_BUFFER_SIZE];
     // Skip to correct page
-    for(int i = 0; i < pageNumber * 4; i++){
+    for(int i = 0; i < pageNumber * RAM_FRAME_SIZE; i++){
         fgets(buffer, sizeof(buffer), filePointer);
     }
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < RAM_FRAME_SIZE; i++){
         if (!fgets(buffer, sizeof(buffer), filePointer)){
             break;
         } else {
@@ -128,8 +138,8 @@ int findFrame(){
      *
      * @return int Frame number
      */
-    for(int i = 0; i < 10; i++){
-        if (ram[(i * 4)] == NULL){
+    for(int i = 0; i < PAGE_TABLE_SIZE; i++){
+        if (ram[(i * RAM_FRAME_SIZE)] == NULL){
             return i;
         }
     }
@@ -149,7 +159,7 @@ int findVictim(struct PCB *p){
         // Formula to get a random value between 0 and 9 inclusive
         flag = 0;
         frame = 0 + rand() / (RAND_MAX / (9 - 0 + 1) + 1);
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < PAGE_TABLE_SIZE; i++){
             if (p->pageTable[i] == frame) {
                 flag = 1;
                 break;
@@ -174,21 +184,19 @@ int updatePageTable(struct PCB *p, int pageNumber, int frameNumber, int victimFr
         // and remove it from said pageTable before updating our current PCB's pageTable
         struct PCB *current = getHead(rq)->next;
         int found = 0;
-        while (current != getTail(rq) && current != p) {
-            for (int i = 0; i < 10; i++) {
+        while (current != NULL || current != p) {
+            for (int i = 0; i < PAGE_TABLE_SIZE; i++) {
                 if (current->pageTable[i] == frameNumber) {
                     current->pageTable[i] = -1;
-                    current = getTail(rq);
-                    found = 1;
-                } else {
-                    current = current->next;
+                    p->pageTable[pageNumber] = frameNumber;
+                    return 0;
                 }
             }
+            current = current->next;
         }
-        if(!found){
-            return -1;
-        }
+        return -1;
+    } else {
+        p->pageTable[pageNumber] = frameNumber;
+        return 0;
     }
-    p->pageTable[pageNumber] = frameNumber;
-    return 0;
 }

@@ -105,12 +105,7 @@ int interpreter(char** words, int wordCount, int* memorySize){
                 return errorCode;
             }
         }
-        //DEBUG
-//        for (int i = 0; i < 40; i++){
-//            printf("Instruction %i: %s\n", i + 1, ram[i]);
-//        }
-        // Run programs
-//        scheduler();
+        scheduler();
         return 0;
     }
     return 7;
