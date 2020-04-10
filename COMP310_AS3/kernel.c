@@ -19,14 +19,20 @@ char *ram[RAM_MEM_SIZE];
 
 int main(){
     int error = 0;
-    boot();
+//    boot();
+
+    //DEBUG
     FILE *fp = fopen("BackingStore/temp.txt", "r");
-//    printf("Frame needed: %d", countTotalPages(fp));
+    loadPage(0, fp, 1);
+    loadPage(1, fp, 2);
 //    error = kernel();
 //    return error;
 }
 
 void boot(){
+    /*
+     * Reset RAM to NULLs, and clean the BackingStore folder
+     */
     initializeRAM();
     system("mkdir -p BackingStore");
     system("rm -rf BackingStore/*");

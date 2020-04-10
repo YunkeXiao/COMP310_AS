@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include "memorymanager.h"
 #include "constants.h"
+#include "kernel.h"
 #include <math.h>
 #include <stdlib.h>
 #include <zconf.h>
+#include "ram.h"
 
 int launcher(FILE *filePointer){
     FILE *BSPointer;
@@ -31,6 +33,12 @@ int launcher(FILE *filePointer){
 }
 
 int countTotalPages(FILE *filePointer){
+    /*
+     * Count the number of Pages needed by the program
+     *
+     * @param filePointer File pointer to the program
+     * @return int Number of pages
+     */
     // Invalid file pointer
     if (!filePointer){
         return -1;
@@ -45,14 +53,33 @@ int countTotalPages(FILE *filePointer){
 }
 
 void loadPage(int pageNumber, FILE* filePointer, int frameNumber){
-    char buffer[BUFFER_SIZE];
+    /*
+     * Loads a page (4 instructions) into RAM, specifically at the given frame
+     *
+     * @param pageNumber The page of the program
+     * @param filePointer File pointer to the program
+     * @param frameNumber Frame of RAM
+     */
+    char buffer[INSTRUCTION_BUFFER_SIZE];
     // Skip to correct page
     for(int i = 0; i < pageNumber * 4; i++){
         fgets(buffer, sizeof(buffer), filePointer);
     }
     for (int i = 0; i < 4; i++){
-        fgets(buffer, sizeof(buffer), filePointer);
-        printf("BUFFER: %s\n", buffer);
+        if (!fgets(buffer, sizeof(buffer), filePointer)){
+            break;
+        } else {
+            loadRAMFrame(buffer, frameNumber, i);
+        }
     }
     rewind(filePointer);
+}
+
+int findFrame(){
+    for(int i = 0; i < 10; i++){
+        if (ram[i * 4] == NULL){
+            return i;
+        }
+    }
+    return -1;
 }
