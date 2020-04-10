@@ -8,6 +8,7 @@
 struct PCB *removeHead();
 struct PCB* getHead(struct READY_QUEUE *rq);
 void addToReady(struct PCB *aPCB);
+void removeFromReady(struct PCB *aPCB);
 struct PCB* getTail(struct READY_QUEUE *rq);
 void setHead(struct READY_QUEUE *rq, struct PCB *head);
 void setTail(struct READY_QUEUE *rq, struct PCB *tail);

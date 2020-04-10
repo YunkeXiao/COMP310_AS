@@ -92,16 +92,25 @@ int scheduler() {
     /*
      * Simulate the ready queue until all programs have completed
      *
-     * @return int Errorcode
+     * @return int errorcode
      */
     struct PCB *head = getHead(rq);
     struct PCB *tail = getTail(rq);
     // The scheduler ends when the ready queue only consists of the head and the tail
     while (getNext(head) != tail) {
-        // Dequeue the ready queue and run the script for the quanta
+        // Dequeue the ready queue and set up CPU values
         struct PCB *current = removeHead();
         cpu->IP = current->pageTable[current->PC_page] * RAM_FRAME_SIZE;
-        int errorCode = run(cpu->quanta, current);
+        cpu->offset = current->PC_offset;
+        // Run quanta and update PCB
+        int errorCode = run(cpu->quanta, current->end);
+        current->PC_offset = cpu->offset;
+        current->PC = current->PC_page * RAM_FRAME_SIZE + current->PC_offset;
+
+        // If new PC is greater or equal to end, then we just ran the last instruction in the program
+        if (current->PC >= current->end){
+            errorCode = 1;
+        }
 
         // errorCode is 1 when the program exits prematurely, or ends
         if (errorCode == 1) {
@@ -129,7 +138,32 @@ int scheduler() {
                     return -1;
             }
             system(command);
-            free(current);
+            removeFromReady(current);
+        }
+        // errorCode 2 is when a next page has to run
+        else if (errorCode == 2){
+            current->PC_offset = 0;
+            current->PC_page++;
+            current->PC = current->PC_page * RAM_FRAME_SIZE + current->PC_offset;
+
+            // Otherwise we want to check if the next page is loaded. If it is, continue, otherwise find victim frame
+            if (current->pageTable[current->PC_page] == -1) {
+                FILE *filePointer;
+                switch (current->PID) {
+                    case 0:
+                        filePointer = fopen("BackingStore/p0.txt", "r");
+                        break;
+                    case 1:
+                        filePointer = fopen("BackingStore/p1.txt", "r");
+                        break;
+                    case 2:
+                        filePointer = fopen("BackingStore/p2.txt", "r");
+                        break;
+                }
+                addPagesToRAM(filePointer, current, current->PC_page, 1);
+                fclose(filePointer);
+            }
+            addToReady(current);
         } else {
             addToReady(current);
         }

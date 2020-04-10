@@ -4,7 +4,7 @@
 #include "PCB_DS.h"
 
 struct CPU* createCPU(int quanta);
-int run(int quanta, struct PCB *current);
+int run(int quanta, int end);
 
 void setIP(struct CPU *cpu, int ip);
 int getIP(struct CPU *cpu);

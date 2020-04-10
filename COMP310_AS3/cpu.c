@@ -19,7 +19,7 @@ struct CPU *createCPU(int quanta){
     return new_cpu;
 }
 
-int run(int quanta, struct PCB * current){
+int run(int quanta, int end){
     /*
      * Takes a quanta and runs the CPU
      *
@@ -27,9 +27,11 @@ int run(int quanta, struct PCB * current){
      * @return int Error code
      */
     for (int time = 0; time < quanta; time++){
-        // Set cpu offset, and update offset in PCB
-        cpu->offset = current->PC_offset;
-
+        //TODO: DEBUG
+        struct CPU *cpucpu = cpu;
+        char *ramram[500];
+        for (int i = 0; i < 40; i++){ramram[i] = ram[i];}
+        //END DEBUG
         // Get the instruction type. If it's a quit instruction, quit immediately
         char *buffer = strdup(ram[cpu->IP + cpu->offset]);
         int index;
@@ -46,50 +48,29 @@ int run(int quanta, struct PCB * current){
         strcpy(cpu->IR, ram[cpu->IP + cpu->offset]);
         printf("%s%s", PROMPT, cpu->IR);
 
-        // Add the new line at th end of the last instruction
-        if (current->PC + 1 == current->end){
+        // Add the new line at the end of the last instruction
+        if (cpu->IP + cpu->offset + 1 == end){
             printf("\n");
         }
 
+        // Run instruction
         int errorCode = processInput(cpu->IR);
+        cpu->offset++;
 
-        // Update PC_offset and PC
-        current->PC_offset++;
-        current->PC = (current->PC_page * RAM_FRAME_SIZE) + current->PC_offset;
+        //TODO: DEBUG
+        cpucpu = cpu;
+        for (int i = 0; i < 40; i++){ramram[i] = ram[i];}
+        //END DEBUG
 
-        if (current->PC >= current->end) {
+
+        // If we have reached the last instruction, before completing the frame (odd frame number)
+        if (ram[cpu->IP + cpu->offset] == NULL && cpu->offset%2 == 1) {
             return 1;
         }
 
         // If offset = 4, we have to use a new page
-        if (current->PC_offset == RAM_FRAME_SIZE){
-            current->PC_offset = 0;
-            current->PC_page++;
-            // If page is greater, then it means we have finished running the program
-            if (current->PC_page >= current->pages_max){
-                return 1;
-            }
-
-            // Otherwise we want to check if the next page is loaded. If it is, continue, otherwise find victim frame
-            if (current->pageTable[current->PC_page] != -1){
-                return 0;
-            }
-
-            FILE *filePointer;
-            switch (current->PID){
-                case 0:
-                    filePointer = fopen("BackingStore/p0.txt", "r");
-                    break;
-                case 1:
-                    filePointer = fopen("BackingStore/p1.txt", "r");
-                    break;
-                case 2:
-                    filePointer = fopen("BackingStore/p2.txt", "r");
-                    break;
-            }
-            addPagesToRAM(filePointer, current, current->PC_page, 1);
-            fclose(filePointer);
-            return 0;
+        if (cpu->offset == RAM_FRAME_SIZE){
+            return 2;
         }
 
         // Process errors
