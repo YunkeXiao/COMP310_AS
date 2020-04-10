@@ -11,8 +11,14 @@
 #include <stdlib.h>
 
 int launcher(FILE *filePointer){
+    /*
+     * Given a file, copy it into the backing store and load it into a PCB
+     *
+     * @param filePointer File pointer to the program
+     * @return int errorcode
+     */
     FILE *BSPointer;
-    int PID = -1;
+    int PID;
 
     // Check for errors
     if (!filePointer){

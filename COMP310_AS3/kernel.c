@@ -89,22 +89,18 @@ int myInit(char *filename) {
 }
 
 int scheduler() {
-//    /*
-//     * Simulate the ready queue until all programs have completed
-//     */
+    /*
+     * Simulate the ready queue until all programs have completed
+     *
+     * @return int Errorcode
+     */
     struct PCB *head = getHead(rq);
     struct PCB *tail = getTail(rq);
     // The scheduler ends when the ready queue only consists of the head and the tail
     while (getNext(head) != tail) {
         // Dequeue the ready queue and run the script for the quanta
         struct PCB *current = removeHead();
-
         cpu->IP = current->pageTable[current->PC_page] * RAM_FRAME_SIZE;
-        char *c[40];
-        for (int i = 0; i < 40; i++){
-            c[i] = ram[i];
-        }
-
         int errorCode = run(cpu->quanta, current);
 
         // errorCode is 1 when the program exits prematurely, or ends
@@ -117,16 +113,17 @@ int scheduler() {
                     }
                 }
             }
+            // Remove correct file
             char * command;
             switch (current->PID){
                 case 0:
-                    command = "BackingStore/p0.txt";
+                    command = "rm BackingStore/p0.txt";
                     break;
                 case 1:
-                    command = "BackingStore/p1.txt";
+                    command = "rm BackingStore/p1.txt";
                     break;
                 case 2:
-                    command = "BackingStore/p2.txt";
+                    command = "rm BackingStore/p2.txt";
                     break;
                 default:
                     return -1;

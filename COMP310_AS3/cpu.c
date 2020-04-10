@@ -20,12 +20,15 @@ struct CPU *createCPU(int quanta){
 }
 
 int run(int quanta, struct PCB * current){
-
+    /*
+     * Takes a quanta and runs the CPU
+     *
+     * @param quanta size
+     * @return int Error code
+     */
     for (int time = 0; time < quanta; time++){
         // Set cpu offset, and update offset in PCB
         cpu->offset = current->PC_offset;
-        int a = cpu->IP;
-        int b = cpu->offset;
 
         // Get the instruction type. If it's a quit instruction, quit immediately
         char *buffer = strdup(ram[cpu->IP + cpu->offset]);
@@ -75,13 +78,13 @@ int run(int quanta, struct PCB * current){
             FILE *filePointer;
             switch (current->PID){
                 case 0:
-                    filePointer = fopen("BackingStore/p0.txt", "r+");
+                    filePointer = fopen("BackingStore/p0.txt", "r");
                     break;
                 case 1:
-                    filePointer = fopen("BackingStore/p1.txt", "r+");
+                    filePointer = fopen("BackingStore/p1.txt", "r");
                     break;
                 case 2:
-                    filePointer = fopen("BackingStore/p2.txt", "r+");
+                    filePointer = fopen("BackingStore/p2.txt", "r");
                     break;
             }
             addPagesToRAM(filePointer, current, current->PC_page, 1);
