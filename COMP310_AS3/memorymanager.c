@@ -118,16 +118,22 @@ int updatePageTable(struct PCB *p, int pageNumber, int frameNumber, int victimFr
         // If we have a victim frame, then we have to find the PCB with the pageTable that points to the victim frame
         // and remove it from said pageTable before updating our current PCB's pageTable
         struct PCB *current = getHead(rq)->next;
+        int found = 0;
         while (current != getTail(rq)) {
             for (int i = 0; i < 10; i++) {
                 if (current->pageTable[i] == frameNumber) {
                     current->pageTable[i] = -1;
                     current = getTail(rq);
+                    found = 1;
                 } else {
                     current = current->next;
                 }
             }
         }
+        if(!found){
+            return -1;
+        }
     }
     p->pageTable[pageNumber] = frameNumber;
+    return 0;
 }
