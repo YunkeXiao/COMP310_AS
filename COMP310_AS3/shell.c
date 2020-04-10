@@ -23,7 +23,7 @@
  * ERROR 8: Too many running files
  * ERROR 9: EOF reached
  * ERROR 10: Duplicate script loaded
- * ERROR 11: Insufficient RAM memory space
+ * ERROR 11: Unable to create BackingStore files
  */
 
 // Function declaration
@@ -111,7 +111,7 @@ int shellUI(){
             continue;
         }
         if (errorCode == 11){
-            printf("----------ERROR 11: Insufficient RAM to load script(s)----------\n\n");
+            printf("----------ERROR 11: Unable to create BackingStore files----------\n\n");
             continue;
         }
         if (errorCode == -1 ){

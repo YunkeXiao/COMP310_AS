@@ -3,7 +3,7 @@
 
 #include "PCB_DS.h"
 
-struct PCB* makePCB(int start, int end);
+struct PCB* makePCB(FILE *filePointer, int PID);
 
 int getEnd(struct PCB *pcb);
 struct PCB* getNext(struct PCB *pcb);

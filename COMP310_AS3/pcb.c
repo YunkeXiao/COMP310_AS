@@ -1,7 +1,9 @@
 #include <stdlib.h>
+#include <bits/types/FILE.h>
 #include "PCB_DS.h"
+#include "memorymanager.h"
 
-struct PCB* makePCB(int start, int end){
+struct PCB* makePCB(FILE *filePointer, int PID){
     /*
      * Initialize a new PCB
      *
@@ -10,16 +12,18 @@ struct PCB* makePCB(int start, int end){
      * @return Initalized PCB
      */
     struct PCB *aPCB = malloc(sizeof(struct PCB));
-    aPCB->start = start;
-    aPCB->end = end;
-    aPCB->PC = start;
+    aPCB->PC = 0;
+    aPCB->PC_page = 0;
+    aPCB->PC_offset = 0;
+    aPCB->pages_max = countTotalPages(filePointer);
+    aPCB->PID = PID;
     return aPCB;
 }
 
 //----------GETTERS----------
-int getEnd(struct PCB *pcb){
-    return pcb->end;
-}
+//int getEnd(struct PCB *pcb){
+//    return pcb->end;
+//}
 
 struct PCB* getNext(struct PCB *pcb){
     return pcb->next;
@@ -33,9 +37,9 @@ struct PCB* getPrev(struct PCB *pcb){
     return pcb->prev;
 }
 
-int getStart(struct PCB *pcb){
-    return pcb->start;
-}
+//int getStart(struct PCB *pcb){
+//    return pcb->start;
+//}
 //----------SETTERS----------
 void setNext(struct PCB* pcb, struct PCB* next){
     pcb->next = next;
@@ -44,7 +48,6 @@ void setNext(struct PCB* pcb, struct PCB* next){
 void setPC(struct PCB* pcb, int pc){
     pcb->PC = pc;
 }
-
 
 void setPrev(struct PCB* pcb, struct PCB* prev){
     pcb->prev = prev;

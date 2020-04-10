@@ -7,8 +7,8 @@ print mary
 print tom
 print bob
 print bobbie
-run s1.txt
-exec s1.txt s2.txt s3.txt
-exec s2.txt s1.txt
-run s3.txt
+run script1.txt
+exec stript1.txt script2.txt script3.txt
+exec stript2.txt script1.txt
+run script3.txt
 quit

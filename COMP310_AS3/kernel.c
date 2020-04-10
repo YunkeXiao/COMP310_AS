@@ -19,15 +19,9 @@ char *ram[RAM_MEM_SIZE];
 
 int main(){
     int error = 0;
-//    boot();
-
-    //DEBUG START
-//    FILE *fp = fopen("BackingStore/temp.txt", "r");
-//    loadPage(0, fp, 1);
-//    loadPage(1, fp, 2);
-    //DEBUG END
-//    error = kernel();
-//    return error;
+    boot();
+    error = kernel();
+    return error;
 }
 
 void boot(){
@@ -98,44 +92,47 @@ int myInit(char *filename) {
      * @errorCode 1: File doesn't exist
      */
     int errorCode = 0;
-    int start, end;
+//    int start, end;
     FILE *file = fopen(filename, "r");
     // If file doesn't exist, return errorCode 1
     if (!file){
         return 1;
     } else {
-        int launcherCode = launcher(file);
-        errorCode = addToRAM(file, &start, &end);
-        addToReady(makePCB(start, end));
+        // Check if program can be loaded
+        if(launcher(file) == -1){
+            errorCode = 1;
+        }
+//        errorCode = addToRAM(file, &start, &end);
+//        addToReady(makePCB(start, end));
         return errorCode;
     }
 }
 
 int scheduler() {
-    /*
-     * Simulate the ready queue until all programs have completed
-     */
-    struct PCB *head = getHead(rq);
-    struct PCB *tail = getTail(rq);
-    // The scheduler ends when the ready queue only consists of the head and the tail
-    while (getNext(head) != tail) {
-        // Dequeue the ready queue and run the script for the quanta
-        struct PCB *current = removeHead();
-        setIP(cpu, getPC(current));
-        int errorCode = run(getQuanta(cpu), getEnd(current));
-
-        // errorCode is 1 when the program exits prematurely, or ends
-        if (errorCode == 1) {
-            int start = getStart(current);
-            int end = getEnd(current);
-            for (int i = start; i <= end; i++) {
-                ram[i] = NULL;
-            }
-            free(current);
-        } else {
-            setPC(current, getIP(cpu));
-            addToReady(current);
-        }
-    }
+//    /*
+//     * Simulate the ready queue until all programs have completed
+//     */
+//    struct PCB *head = getHead(rq);
+//    struct PCB *tail = getTail(rq);
+//    // The scheduler ends when the ready queue only consists of the head and the tail
+//    while (getNext(head) != tail) {
+//        // Dequeue the ready queue and run the script for the quanta
+//        struct PCB *current = removeHead();
+//        setIP(cpu, getPC(current));
+//        int errorCode = run(getQuanta(cpu), getEnd(current));
+//
+//        // errorCode is 1 when the program exits prematurely, or ends
+//        if (errorCode == 1) {
+//            int start = getStart(current);
+//            int end = getEnd(current);
+//            for (int i = start; i <= end; i++) {
+//                ram[i] = NULL;
+//            }
+//            free(current);
+//        } else {
+//            setPC(current, getIP(cpu));
+//            addToReady(current);
+//        }
+//    }
     return 0;
 }

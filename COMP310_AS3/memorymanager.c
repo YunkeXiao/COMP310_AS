@@ -7,28 +7,38 @@
 #include <stdlib.h>
 #include <zconf.h>
 #include "ram.h"
+#include "pcb.h"
 
 int launcher(FILE *filePointer){
     FILE *BSPointer;
+    int PID = -1;
+
     if (!filePointer){
         return -1;
     }
     // Check which file is to be created (p0.txt for the first program, p1.txt for the second, p3.txt for the third)
     if (access("BackingStore/p0.txt", F_OK) == -1){
         BSPointer = fopen("BackingStore/p0.txt", "w");
+        PID = 0;
     } else if (access("BackingStore/p1.txt", F_OK) == -1){
         BSPointer = fopen("BackingStore/p1.txt", "w");
+        PID = 1;
     } else {
         BSPointer = fopen("BackingStore/p2.txt", "w");
+        PID = 2;
     }
 
+    // Copy code over
     char inp;
     while ( (inp = (char)fgetc(filePointer)) != EOF){
         fputc(inp, BSPointer);
     }
     // Clean pointers
     rewind(filePointer);
-    fclose(BSPointer);
+    rewind(BSPointer);
+
+    struct PCB *aPCB = makePCB(BSPointer, PID);
+
     return 1;
 }
 

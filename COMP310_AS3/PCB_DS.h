@@ -7,8 +7,7 @@ struct PCB{
     int PC_offset;
     int pages_max;
     int pageTable[10];
-    int start;
-    int end;
+    int PID;
     struct PCB *next;
     struct PCB *prev;
 };

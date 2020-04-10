@@ -94,10 +94,6 @@ int interpreter(char** words, int wordCount, int* memorySize){
                 }
             }
         }
-        // Initalize RAM to empty
-        for (int i = 0; i < RAM_MEM_SIZE; i++){
-            ram[i] = NULL;
-        }
         // Initalize ready queue and PCBs
         for (int i = 1; i < wordCount; i++){
             // If duplicated script, ignore
@@ -115,7 +111,7 @@ int interpreter(char** words, int wordCount, int* memorySize){
             }
         }
         // Run programs
-        scheduler();
+//        scheduler();
         return 0;
     }
     return 7;
