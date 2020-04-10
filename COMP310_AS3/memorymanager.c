@@ -76,10 +76,58 @@ void loadPage(int pageNumber, FILE* filePointer, int frameNumber){
 }
 
 int findFrame(){
+    /*
+     * Find the first frame in FIFO fashion that is free
+     *
+     * @return int Frame number
+     */
     for(int i = 0; i < 10; i++){
         if (ram[i * 4] == NULL){
             return i;
         }
     }
     return -1;
+}
+
+int findVictim(struct PCB *p){
+    /*
+     * Find random frame in RAM that can be replaced with new frame
+     *
+     * @param PCB whose code will replace the victim frame
+     * @return int Frame number
+     */
+    int frame;
+    while(1) {
+        // Formula to get a random value between 0 and 9 inclusive
+        frame = 0 + rand() / (RAND_MAX / (9 - 0 + 1) + 1);
+        if (frame != p->PC_page){
+            return frame;
+        }
+    }
+}
+
+int updatePageTable(struct PCB *p, int pageNumber, int frameNumber, int victimFrame) {
+    /*
+     * Update the page table of the PCB in question. If a victim frame was used, then update victim PCB's page
+     * table too
+     *
+     * @param PCB whose code will replace the victim frame
+     * @return int Frame number
+     */
+    if (victimFrame) {
+        // If we have a victim frame, then we have to find the PCB with the pageTable that points to the victim frame
+        // and remove it from said pageTable before updating our current PCB's pageTable
+        struct PCB *current = getHead(rq)->next;
+        while (current != getTail(rq)) {
+            for (int i = 0; i < 10; i++) {
+                if (current->pageTable[i] == frameNumber) {
+                    current->pageTable[i] = -1;
+                    current = getTail(rq);
+                } else {
+                    current = current->next;
+                }
+            }
+        }
+    }
+    p->pageTable[pageNumber] = frameNumber;
 }

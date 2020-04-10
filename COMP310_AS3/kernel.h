@@ -17,6 +17,7 @@ struct PCB* getTail(struct READY_QUEUE *rq);
 void setHead(struct READY_QUEUE *rq, struct PCB *head);
 void setTail(struct READY_QUEUE *rq, struct PCB *tail);
 
+extern struct READY_QUEUE *rq;
 extern struct CPU *cpu;
 extern char *ram[];
 

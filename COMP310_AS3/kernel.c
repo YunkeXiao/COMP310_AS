@@ -21,10 +21,11 @@ int main(){
     int error = 0;
 //    boot();
 
-    //DEBUG
-    FILE *fp = fopen("BackingStore/temp.txt", "r");
-    loadPage(0, fp, 1);
-    loadPage(1, fp, 2);
+    //DEBUG START
+//    FILE *fp = fopen("BackingStore/temp.txt", "r");
+//    loadPage(0, fp, 1);
+//    loadPage(1, fp, 2);
+    //DEBUG END
 //    error = kernel();
 //    return error;
 }
